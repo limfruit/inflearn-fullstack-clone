@@ -1,5 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
+import { AccessToeknGuard } from './auth/guards/access-token.guard';
+import type { Request } from 'express';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller()
 export class AppController {
@@ -9,4 +12,13 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Get('user-test')
+  @UseGuards(AccessToeknGuard)
+  @ApiBearerAuth('access-token')
+  testUser(@Req() req: Request) {
+    console.log(req.user);
+    return `유저 이메일: ${req.user?.email}`;
+  }
+
 }
