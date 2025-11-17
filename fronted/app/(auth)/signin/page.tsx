@@ -33,7 +33,7 @@ export default function SinginPage() {
               onChange={(e) => setEmail(e.target.value)}
               type="email"
               name="email"
-              placeholder="example@inflab.com"
+              placeholder="이메일"
               className="border-2 border-gray-300 rounded-sm p-2"
             />
             <label htmlFor="password">비밀번호</label>
@@ -42,7 +42,7 @@ export default function SinginPage() {
               onChange={(e) => setPassword(e.target.value)}
               type="password"
               name="password"
-              placeholder="example@inflab.com"
+              placeholder="비밀번호"
               className="border-2 border-gray-300 rounded-sm p-2"
             />
     

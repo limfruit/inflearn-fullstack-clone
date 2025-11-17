@@ -56,7 +56,7 @@ export default function SinginPage() {
               onChange={(e) => setPassword(e.target.value)}
               type="password"
               name="password"
-              placeholder="example@inflab.com"
+              placeholder="최소 5자리 이상"
               className="border-2 border-gray-300 rounded-sm p-2"
             />
             <label htmlFor="passwordConfirm">비밀번호 확인</label>
@@ -65,7 +65,7 @@ export default function SinginPage() {
               onChange={(e) => setPasswordConfirm(e.target.value)}
               type="password"
               name="passwordConfirm"
-              placeholder="example@inflab.com"
+              placeholder="최소 5자리 이상"
               className="border-2 border-gray-300 rounded-sm p-2"
             />
     
