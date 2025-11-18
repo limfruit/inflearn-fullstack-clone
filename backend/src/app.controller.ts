@@ -1,6 +1,6 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
-import { AccessToeknGuard } from './auth/guards/access-token.guard';
+import { AccessTokenGuard } from './auth/guards/access-token.guard';
 import type { Request } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
@@ -14,7 +14,7 @@ export class AppController {
   }
 
   @Get('user-test')
-  @UseGuards(AccessToeknGuard)
+  @UseGuards(AccessTokenGuard)
   @ApiBearerAuth('access-token')
   testUser(@Req() req: Request) {
     console.log(req.user);
