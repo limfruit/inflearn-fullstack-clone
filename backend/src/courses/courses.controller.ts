@@ -20,7 +20,7 @@ import { Prisma } from '@prisma/client';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { Course as CourseEntity } from 'src/_gen/prisma-class/course';
 
-@ApiTags('courses') // swagger 태그
+@ApiTags('코스') // swagger 태그
 @Controller('courses')
 export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
