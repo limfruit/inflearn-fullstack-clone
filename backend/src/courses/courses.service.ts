@@ -42,21 +42,16 @@ export class CoursesService {
         });
     }
 
-    async findOne(id: string, include?: string[]): Promise<Course | null> {
-        const includeObject = {}; // 실제로 포함할 Course의 하위모델들
-    
-        if (include) {
-          include.forEach((item) => {
-            includeObject[item] = true;
-          });
-        }
-    
-        const course = await this.prisma.course.findUnique({
-          where: { id },
-          include: include && include.length > 0 ? includeObject : undefined,
-        });
-    
-        return course;
+    async findOne(
+      id: string,
+      include?: Prisma.CourseInclude,
+    ): Promise<Course | null> {
+      const course = await this.prisma.course.findUnique({
+        where: { id },
+        include,
+      });
+  
+      return course;
     }
 
     async update(

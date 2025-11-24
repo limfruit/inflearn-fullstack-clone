@@ -15,6 +15,11 @@ export class UpdateCourseDto extends PartialType(CreateCourseDto) {
     @IsString()
     @IsOptional()
     shortDescription?: string;
+
+    @ApiProperty({ description: '코스 상태', required: false })
+    @IsString()
+    @IsOptional()
+    status?: string;
   
     @ApiProperty({ description: '코스 상세페이지 설명', required: false })
     @IsString()
@@ -39,11 +44,6 @@ export class UpdateCourseDto extends PartialType(CreateCourseDto) {
     @IsString()
     @IsOptional()
     level?: string;
-  
-    @ApiProperty({ description: '코스 게시 여부', required: false })
-    @IsBoolean()
-    @IsOptional()
-    isPublished?: boolean;
   
     @ApiProperty({ description: '코스 카테고리 ID 목록', required: false })
     @IsArray()

@@ -87,7 +87,6 @@ model Course {
   level            String   @default("BEGINEER")
   status           String   @default("DRAFT")
   instructorId     String   @map("instructor_id") // 지식공유자(강의 만든 사람)
-  isPublished      Boolean  @default(false) @map("is_published") // 강의가 출시됐는지
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 
