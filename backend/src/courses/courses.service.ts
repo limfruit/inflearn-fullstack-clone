@@ -4,6 +4,8 @@ import { CreateCourseDto } from './dto/create-course.dto';
 import { Course, Prisma } from '@prisma/client';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import slugify from 'lib/slugify';
+import { SearchCourseDto } from './dto/search-course.dto';
+import { SearchCourseResponseDto } from './dto/search-response.dto';
 
 @Injectable()
 export class CoursesService {
@@ -107,4 +109,101 @@ export class CoursesService {
 
         return course;
     }
+
+  async searchCourses(
+    searchCourseDto: SearchCourseDto,
+  ): Promise<SearchCourseResponseDto> {
+    const { q, category, priceRange, sortBy, order, page, pageSize } = searchCourseDto;
+  
+    const where: Prisma.CourseWhereInput = {};
+  
+    if (q) {
+      where.OR = [
+        // title에 포함된 키워드
+        {
+          title: {
+            contains: q,
+            mode: 'insensitive', // 대소문자 구분없이 검색
+          },
+        },
+        // instructor(지식공유자) 이름이 포함된 키워드
+        {
+          instructor: {
+            name: {
+              contains: q,
+              mode: 'insensitive',
+            },
+          },
+        },
+      ];
+    }
+  
+    if (category) {
+      where.categories = {
+        some: { // 카테고리 중 어떤거라도 해당된다면,,
+          id: category,
+        },
+      };
+    }
+  
+    if (priceRange) {
+      const priceConditions: any = {};
+      if (priceRange.min !== undefined) {
+        priceConditions.gte = priceRange.min;
+      }
+      if (priceRange.max !== undefined) {
+        priceConditions.lte = priceRange.max;
+      }
+      if (Object.keys(priceConditions).length > 0) {
+        where.price = priceConditions;
+      }
+    }
+  
+    const orderBy: Prisma.CourseOrderByWithRelationInput = {};
+    if (sortBy === 'price') {
+      orderBy.price = order as 'asc' | 'desc';
+    }
+  
+    const skip = (page - 1) * pageSize;
+    const totalItems = await this.prisma.course.count({ where });
+    const courses = await this.prisma.course.findMany({
+      where,
+      orderBy,
+      skip,
+      take: pageSize,
+      include: {
+        instructor: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        categories: true,
+        _count: {
+          select: {
+            enrollments: true,
+            reviews: true,
+          },
+        },
+      },
+    });
+  
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const hasNext = page < totalPages;
+    const hasPrev = page > 1;
+  
+    return {
+      success: true,
+      data: {
+        courses: courses as any[],
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalItems,
+          hasNext,
+          hasPrev,
+        },
+      },
+    };
+  }
 }
