@@ -7,14 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
 import { CATEGORY_ICONS } from "@/app/constants/category-icons";
-import React from "react";
+import React, { useState } from "react";
 import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 
@@ -29,15 +29,17 @@ export default function SiteHeader({
 }) {
   const pathname = usePathname();
   const isSiteHeaderNeeded = !pathname.includes("/course/");
-  const isCategoryNeeded = pathname == "/" || pathname.includes("/courses");
+  const isCategoryNeeded = pathname == "/" 
+                        || pathname.includes("/courses")
+                        || pathname.includes("/search");
+  const [search, setSearch] = useState("");
+  const router = useRouter();
 
   if (!isSiteHeaderNeeded) return null;
 
   return (
-    <header className="site-header w-full border-b bg-white">
-      {/* 상단 헤더 */}
+    <header className="relative site-header w-full bg-white">
       <div className="header-top flex items-center justify-between px-8 py-3 gap-4">
-        {/* 로고 */}
         <div className="logo min-w-[120px]">
           <Link href="/">
             <Image
@@ -66,16 +68,30 @@ export default function SiteHeader({
         </nav>
         {/* 검색창 + 아이콘 */}
         <div className="flex-1 flex justify-center">
-          <div className="relative flex w-full max-w-xl items-center">
+          <div className="relative flex w-full items-center">
             <Input
               type="text"
               placeholder="나의 진짜 성장을 도와줄 실무 강의를 찾아보세요"
               className="w-full bg-gray-50 border-gray-200 focus-visible:ring-[#1dc078] pr-10"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  if (search.trim()) {
+                    router.push(`/search?q=${search}`);
+                    }
+                }
+              }}
             />
             <button
               type="button"
               className="absolute right-2 p-1 text-gray-400 hover:text-[#1dc078] transition-colors"
               tabIndex={-1}
+              onClick={() => { 
+                if (search.trim()) {
+                router.push(`/search?q=${search}`);
+                }
+              }}
             >
               <Search size={20} />
             </button>
@@ -151,7 +167,7 @@ export default function SiteHeader({
       {/* 하단 카테고리 */}
       <div className="header-bottom bg-white px-8">
         {isCategoryNeeded && (
-          <nav className="category-nav flex gap-6 py-4 overflow-x-auto scrollbar-none">
+          <nav className="category-nav flex justify-between gap-6 py-4 overflow-x-auto scrollbar-none">
             {categories.map((category) => (
               <Link key={category.id} href={`/courses/${category.slug}`}>
                 <div className="category-item flex flex-col items-center min-w-[72px] text-gray-700 hover:text-[#1dc078] cursor-pointer transition-colors">
@@ -172,6 +188,12 @@ export default function SiteHeader({
           </nav>
         )}
       </div>
+      <div className="border-b absolute bottom-0 w-screen left-1/2 -translate-x-1/2"></div>
+      {/* 
+        left-1/2 -> 상위 헤더의 절반만큼 오른쪽으로 이동(중간 위치부터 끝까지 선이 그려지게 됨
+        -translate-x-1/2 -> 본인의 절반만큼 역으로 돌아오게 됨
+        => 결국 선이 화면 전체를 차지할 수 있게 됨 (상위 부모가 어떻든 전체를 차지할 수 있음)
+      */}
     </header>
   );
 }

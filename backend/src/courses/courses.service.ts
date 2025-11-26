@@ -141,7 +141,7 @@ export class CoursesService {
     if (category) {
       where.categories = {
         some: { // 카테고리 중 어떤거라도 해당된다면,,
-          id: category,
+          slug: category,
         },
       };
     }
@@ -193,16 +193,13 @@ export class CoursesService {
     const hasPrev = page > 1;
   
     return {
-      success: true,
-      data: {
-        courses: courses as any[],
-        pagination: {
-          currentPage: page,
-          totalPages,
-          totalItems,
-          hasNext,
-          hasPrev,
-        },
+      courses: courses as any[],
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems,
+        hasNext,
+        hasPrev,
       },
     };
   }

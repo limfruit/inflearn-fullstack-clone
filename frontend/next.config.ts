@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: process.env.CLOUDFRONT_DOMAIN as string,
       },
+
+      // Course seed에 있는 host값
+      {
+        protocol: "https",
+        hostname: "cdn.inflearn.com",
+      },
     ],
   },
 };
