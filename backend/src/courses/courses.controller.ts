@@ -21,6 +21,7 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 import { Course as CourseEntity } from 'src/_gen/prisma-class/course';
 import { SearchCourseResponseDto } from './dto/search-response.dto';
 import { SearchCourseDto } from './dto/search-course.dto';
+import { CourseDetailDto } from './dto/course-detail.dto';
 
 @ApiTags('코스') // swagger 태그
 @Controller('courses')
@@ -84,57 +85,66 @@ export class CoursesController {
     });
   }
 
+  // @Get(':id')
+  // @ApiQuery({
+  //   name: 'include',
+  //   required: false,
+  //   description: 'sections,lectures,courseReviews 등 포함할 관계 지정',
+  // })
+  // @ApiOkResponse({
+  //   description: '코스 상세 정보',
+  //   type: CourseEntity // Course 그대로는 type으로 쓸 수 없음
+  // })
+  // findOne(
+  //   @Param('id', ParseUUIDPipe) id: string, // ParseUUIDPipe - uuid 인지 검사해주는 pipe 함수
+  //   @Query('include') include?: string,
+  // ) {
+  //   const includeArray = include ? include.split(',') : undefined;
+
+  //   let includeObject: Prisma.CourseInclude;
+
+  //   if (
+  //     includeArray?.includes('sections') &&
+  //     includeArray?.includes('lectures')
+  //   ) {
+  //     const otherInclude = includeArray.filter(
+  //       (item) => !['sections', 'lectures'].includes(item),
+  //     );
+  //     includeObject = {
+  //       sections: {
+  //         include: {
+  //           lectures: {
+  //             orderBy: {
+  //               order: 'asc',
+  //             },
+  //           },
+  //         },
+  //         orderBy: {
+  //           order: 'asc',
+  //         },
+  //       },
+  //       ...otherInclude.map((item) => ({
+  //         [item]: true,
+  //       })),
+  //     };
+  //   } else {
+  //     includeObject = {
+  //       ...includeArray?.map((item) => ({
+  //         [item]: true,
+  //       })),
+  //     } as Prisma.CourseInclude;
+  //   }
+
+  //   return this.coursesService.findOne(id, includeObject);
+  // }
+
   @Get(':id')
-  @ApiQuery({
-    name: 'include',
-    required: false,
-    description: 'sections,lectures,courseReviews 등 포함할 관계 지정',
-  })
   @ApiOkResponse({
     description: '코스 상세 정보',
-    type: CourseEntity // Course 그대로는 type으로 쓸 수 없음
+    type: CourseDetailDto,
   })
-  findOne(
-    @Param('id', ParseUUIDPipe) id: string, // ParseUUIDPipe - uuid 인지 검사해주는 pipe 함수
-    @Query('include') include?: string,
-  ) {
-    const includeArray = include ? include.split(',') : undefined;
-
-    let includeObject: Prisma.CourseInclude;
-
-    if (
-      includeArray?.includes('sections') &&
-      includeArray?.includes('lectures')
-    ) {
-      const otherInclude = includeArray.filter(
-        (item) => !['sections', 'lectures'].includes(item),
-      );
-      includeObject = {
-        sections: {
-          include: {
-            lectures: {
-              orderBy: {
-                order: 'asc',
-              },
-            },
-          },
-          orderBy: {
-            order: 'asc',
-          },
-        },
-        ...otherInclude.map((item) => ({
-          [item]: true,
-        })),
-      };
-    } else {
-      includeObject = {
-        ...includeArray?.map((item) => ({
-          [item]: true,
-        })),
-      } as Prisma.CourseInclude;
-    }
-
-    return this.coursesService.findOne(id, includeObject);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.coursesService.findOne(id);
   }
 
   @Patch(':id')
