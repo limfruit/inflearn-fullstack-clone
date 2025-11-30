@@ -142,12 +142,14 @@ export class CoursesController {
   // }
 
   @Get(':id')
+  @UseGuards(OptionalAccessTokenGuard)
+  @ApiBearerAuth('access-token')
   @ApiOkResponse({
     description: '코스 상세 정보',
     type: CourseDetailDto,
   })
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.coursesService.findOne(id);
+  findOne(@Req() req: Request, @Param('id', ParseUUIDPipe) id: string) {
+    return this.coursesService.findOne(id, req.user?.sub);
   }
 
   @Patch(':id')
@@ -201,7 +203,6 @@ export class CoursesController {
     return this.coursesService.removeFavorite(id, req.user.sub);
   }
 
-  // 개별 강의 즐겨찾기 조회
   @Get(':id/favorite')
   @UseGuards(OptionalAccessTokenGuard)
   @ApiBearerAuth('access-token')
@@ -210,13 +211,20 @@ export class CoursesController {
     return this.coursesService.getFavorite(id, req.user?.sub);
   }
 
-  // 나의 모든 즐겨찾기 조회
   @Get('favorites/my')
   @UseGuards(AccessTokenGuard)
   @ApiBearerAuth('access-token')
   @ApiOkResponse({ type: CourseFavoriteEntity, isArray: true })
   getMyFavorites(@Req() req: Request) {
     return this.coursesService.getMyFavorites(req.user.sub);
+  }
+
+  @Post(':id/enroll')
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOkResponse({ type: Boolean })
+  enrollCourse(@Req() req: Request, @Param('id', ParseUUIDPipe) id: string) {
+    return this.coursesService.enrollCourse(id, req.user.sub);
   }
 }
 
