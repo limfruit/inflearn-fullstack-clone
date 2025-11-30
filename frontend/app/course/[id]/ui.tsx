@@ -2,10 +2,10 @@
 
 import {
   CourseDetailDto,
-  Section,
-  Lecture,
-  CourseReview,
-  User,
+  Section as SectionEntity,
+  Lecture as LectureEntity,
+  CourseReview as CourseReviewEntity,
+  User as UserEntity,
 } from "@/generated/openapi-client";
 import {
   Accordion,
@@ -19,10 +19,14 @@ import {
   PlayCircleIcon,
   LockIcon,
   ShoppingCartIcon,
+  HeartIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { getLevelText } from "@/lib/level";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import * as api from "@/lib/api";
+import { User } from "next-auth";
 
 function formatSecondsToMinSec(seconds: number) {
   const mins = Math.floor(seconds / 60)
@@ -131,7 +135,7 @@ function Header({ course }: { course: CourseDetailDto }) {
   );
 }
 
-function LatestReviews({ reviews }: { reviews: CourseReview[] }) {
+function LatestReviews({ reviews }: { reviews: CourseReviewEntity[] }) {
   if (!reviews.length) return null;
   const latest = [...reviews]
     .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
@@ -151,8 +155,7 @@ function LatestReviews({ reviews }: { reviews: CourseReview[] }) {
       <div
         className={cn(
           "grid grid-cols-2 gap-4",
-          latest.length > 2 && "grid-rows-2" 
-          // 리뷰가 2개 넘으면 두줄로
+          latest.length > 2 && "grid-rows-2"
         )}
       >
         {latest.map((r, idx) => {
@@ -208,7 +211,7 @@ function LectureRow({
   lecture,
   className,
 }: {
-  lecture: Lecture;
+  lecture: LectureEntity;
   className?: string;
 }) {
   return (
@@ -241,7 +244,7 @@ function LectureRow({
   );
 }
 
-function Curriculum({ sections }: { sections: Section[] }) {
+function Curriculum({ sections }: { sections: SectionEntity[] }) {
   return (
     <section id="curriculum" className="mt-12">
       <h2 className="text-2xl font-bold mb-6">커리큘럼</h2>
@@ -284,7 +287,7 @@ function Curriculum({ sections }: { sections: Section[] }) {
   );
 }
 
-function ReviewsSection({ reviews }: { reviews: CourseReview[] }) {
+function ReviewsSection({ reviews }: { reviews: CourseReviewEntity[] }) {
   if (!reviews.length) return null;
   return (
     <section id="reviews" className="mt-12">
@@ -328,7 +331,7 @@ function ReviewsSection({ reviews }: { reviews: CourseReview[] }) {
   );
 }
 
-function InstructorBio({ instructor }: { instructor: User }) {
+function InstructorBio({ instructor }: { instructor: UserEntity }) {
   return (
     <>
       <hr className="border-t border-gray-200 my-12" />
@@ -367,16 +370,58 @@ function InstructorBio({ instructor }: { instructor: User }) {
   );
 }
 
-function FloatingMenu({ course }: { course: CourseDetailDto }) {
+function FloatingMenu({
+  user,
+  course,
+}: {
+  user?: User;
+  course: CourseDetailDto;
+}) {
+  const getFavoriteQuery = useQuery({
+    queryKey: ["favorite", course.id],
+    queryFn: () => api.getFavorite(course.id),
+  });
+
   const handleCart = useCallback(() => {
     alert("장바구니 기능은 준비 중입니다.");
   }, []);
+
+  const addFavoriteMutation = useMutation({
+    mutationFn: () => api.addFavorite(course.id),
+    onSuccess: () => {
+      getFavoriteQuery.refetch();
+    },
+  });
+
+  const removeFavoriteMutation = useMutation({
+    mutationFn: () => {
+      return api.removeFavorite(course.id);
+    },
+    onSuccess: () => {
+      getFavoriteQuery.refetch();
+    },
+  });
+
+  const isFavoriteDisabled =
+    addFavoriteMutation.isPending || removeFavoriteMutation.isPending;
+
+  const handleFavorite = useCallback(() => {
+    if (user) {
+      // toggle
+      if (getFavoriteQuery.data?.data?.isFavorite) {
+        removeFavoriteMutation.mutate();
+      } else {
+        addFavoriteMutation.mutate();
+      }
+    } else {
+      alert("로그인 후 이용해주세요.");
+    }
+  }, [user, getFavoriteQuery, addFavoriteMutation, removeFavoriteMutation]);
 
   return (
     <aside className="lg:sticky lg:top-24 lg:self-start lg:block hidden">
       <div className="border rounded-md w-80">
         <div className="p-6 space-y-4">
-          {/* 가격 */}
           <div>
             {course.discountPrice ? (
               <>
@@ -393,20 +438,36 @@ function FloatingMenu({ course }: { course: CourseDetailDto }) {
               </span>
             )}
           </div>
-          <button className="w-full py-2 px-4 rounded-md bg-primary text-white font-semibold">
+          <button className="cursor-pointer w-full py-2 px-4 rounded-md bg-primary text-white font-semibold">
             수강신청 하기
           </button>
           <button
             onClick={handleCart}
-            className="w-full py-2 px-4 rounded-md border font-medium"
+            className="cursor-pointer w-full py-2 px-4 rounded-md border font-medium"
           >
             바구니에 담기
           </button>
           <button
-            disabled
-            className="w-full py-2 px-4 rounded-md border font-medium text-muted-foreground cursor-not-allowed"
+            onClick={handleFavorite}
+            disabled={isFavoriteDisabled}
+            className={cn(
+              "cursor-pointer w-full py-2 px-4 rounded-md border font-medium flex items-center justify-center gap-2 transition-colors",
+              getFavoriteQuery.data?.data?.isFavorite
+                ? "bg-red-50 border-red-200 text-red-600 hover:bg-red-100"
+                : "hover:bg-gray-50",
+              isFavoriteDisabled && "cursor-not-allowed"
+            )}
           >
-            즐겨찾기 (준비중)
+            <HeartIcon
+              className={cn(
+                "size-4 transition-colors",
+                getFavoriteQuery.data?.data?.isFavorite
+                  ? "fill-red-500 text-red-500"
+                  : "text-gray-500",
+                isFavoriteDisabled && "cursor-not-allowed"
+              )}
+            />
+            {getFavoriteQuery.data?.data?.favoriteCount ?? 0}
           </button>
         </div>
         {/* info section */}
@@ -468,14 +529,17 @@ function MobileBottomBar({ course }: { course: CourseDetailDto }) {
 
 export default function CourseDetailUI({
   course,
+  user,
 }: {
   course: CourseDetailDto;
+  user?: User;
 }) {
   return (
     <div className="mx-auto px-4 pb-24 lg:pb-12">
       <Header course={course} />
 
       <div className="mt-12 grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-10">
+        {/* Main content */}
         <div className="max-w-3xl">
           <Introduction course={course} />
           <InstructorBio instructor={course.instructor} />
@@ -484,7 +548,7 @@ export default function CourseDetailUI({
         </div>
 
         {/* Floating menu */}
-        <FloatingMenu course={course} />
+        <FloatingMenu user={user} course={course} />
       </div>
 
       {/* 모바일 하단 바 */}
