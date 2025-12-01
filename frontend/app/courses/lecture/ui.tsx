@@ -45,9 +45,6 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import * as api from "@/lib/api";
 
-/*****************
- * Helper Utils  *
- *****************/
 function formatSecondsToMinSec(seconds: number | undefined) {
   if (!seconds) return "00:00";
   const mins = Math.floor(seconds / 60)
@@ -59,9 +56,6 @@ function formatSecondsToMinSec(seconds: number | undefined) {
   return `${mins}:${secs}`;
 }
 
-/*****************
- * Sub Components *
- *****************/
 function LectureRow({
   lecture,
   isActive,
@@ -209,6 +203,7 @@ function VideoPlayer({
     | string
     | undefined;
 
+  // 무한 루프 방지를 위해 useRef 사용
   const playerRef = React.useRef<any>(null);
   const wrapperRef = React.useRef<HTMLDivElement>(null);
   const hasSeekOnReadyRef = React.useRef(false);
@@ -216,7 +211,7 @@ function VideoPlayer({
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
   const [volume, setVolume] = useState(0.8);
-  const [played, setPlayed] = useState(0); // fraction 0~1
+  const [played, setPlayed] = useState(0); // fraction 0~1, 어느정도까지 플레이되었는지에 대한 정보
   const [playedSeconds, setPlayedSeconds] = useState(0);
   const [seeking, setSeeking] = useState(false);
   const [totalDuration, setTotalDuration] = useState(0);

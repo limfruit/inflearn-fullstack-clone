@@ -232,8 +232,8 @@ model LectureActivity {
   userId        String   @map("user_id")
   courseId      String   @map("course_id")
   lectureId     String   @map("lecture_id")
-  progress      Int      @default(0)
-  duration      Int      @default(0)
+  progress      Int      @default(0) // 몇 퍼센트 진행됐는지에 대한 정보 (실제로 어디까지 봤는지는 알 수 없음)
+  duration      Int      @default(0) // 몇 초 봤는지에 대한 정보 (seconds)
   isCompleted   Boolean  @default(false) @map("is_completed")
   lastWatchedAt DateTime @default(now()) @map("last_watched_at")
 
@@ -242,5 +242,5 @@ model LectureActivity {
   lecture Lecture @relation(fields: [lectureId], references: [id], onDelete: Cascade)
 
   @@unique([userId, courseId, lectureId])
-  @@map("lecture_activities")
+   @@map("lecture_activities")
 }
