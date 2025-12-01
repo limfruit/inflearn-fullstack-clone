@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  devIndicators: false,
   experimental: {
     serverActions: {
       // server actions 에서 기본적으로 제한해놓은 용량이 1mb라서 그걸 초과하면 오류가 날 수 있음

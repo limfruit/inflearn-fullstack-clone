@@ -25,6 +25,7 @@ import { CourseDetailDto } from './dto/course-detail.dto';
 import { OptionalAccessTokenGuard } from 'src/auth/guards/optional-access-token.guard';
 import { GetFavoriteResponseDto } from './dto/favorite.dto';
 import { CourseFavorite as CourseFavoriteEntity } from 'src/_gen/prisma-class/course_favorite';
+import { LectureActivity as LectureActivityEntity } from 'src/_gen/prisma-class/lecture_activity';
 
 @ApiTags('코스') // swagger 태그
 @Controller('courses')
@@ -43,43 +44,24 @@ export class CoursesController {
   }
 
   @Get()
-  @ApiQuery({ name: 'title', required: false })
-  @ApiQuery({ name: 'level', required: false })
-  @ApiQuery({ name: 'categoryId', required: false })
   @ApiQuery({ name: 'skip', required: false })
   @ApiQuery({ name: 'take', required: false })
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('access-token')
   @ApiOkResponse({
     description: '코스 목록',
     type: CourseEntity,
     isArray: true
   })
-  findAll(
-    @Query('title') title?: string,
-    @Query('level') level?: string,
-    @Query('categoryId') categoryId?: string,
+  findAllMyCourses(
+    @Req() req: Request,
     @Query('skip') skip?: string,
     @Query('take') take?: string,
   ) {
-    const where: Prisma.CourseWhereInput = {};
-
-    if (title) {
-      where.title = { contains: title, mode: 'insensitive' }; // insensitive - 대소문자 구분없이 모두 가져옴
-    }
-
-    if (level) {
-      where.level = level;
-    }
-
-    if (categoryId) {
-      where.categories = {
-        some: { // course는 category를 리스트이기 때문에 id룰 하나라도 가지고 있으면 가져올 수 있게끔 함
-          id: categoryId,
-        },
-      };
-    }
-
     return this.coursesService.findAll({
-      where,
+      where: {
+        instructorId: req.user.sub,
+      },
       skip: skip ? parseInt(skip) : undefined,
       take: take ? parseInt(take) : undefined,
       orderBy: {
@@ -225,6 +207,18 @@ export class CoursesController {
   @ApiOkResponse({ type: Boolean })
   enrollCourse(@Req() req: Request, @Param('id', ParseUUIDPipe) id: string) {
     return this.coursesService.enrollCourse(id, req.user.sub);
+  }
+
+  @Get(':courseId/activity')
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOkResponse({
+    description: '개별 강의 활동 이벤트 조회',
+    type: LectureActivityEntity,
+    isArray: true,
+  })
+  getLectureActivity(@Req() req: Request, @Param('courseId') courseId: string) {
+    return this.coursesService.getAllLectureActivities(courseId, req.user.sub);
   }
 }
 

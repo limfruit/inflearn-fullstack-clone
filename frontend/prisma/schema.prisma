@@ -15,18 +15,18 @@ datasource db {
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String  @map("user_id")
-  type               String
-  provider           String
-  providerAccountId  String  @map("provider_account_id")
-  refresh_token      String? @db.Text
-  access_token       String? @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -77,8 +77,8 @@ model VerificationToken {
 }
 
 model Course {
-  id String @id @default(uuid())
-  slug String @unique // 인프런은 강의링크에 id가 아니라 제목을 축약시킨 영어제목 String이 들어감 (검색에 더 잘 걸림)
+  id               String   @id @default(uuid())
+  slug             String   @unique
   title            String
   shortDescription String?  @map("short_description")
   description      String?  @map("description")
@@ -87,7 +87,7 @@ model Course {
   discountPrice    Int?     @map("discount_price")
   level            String   @default("BEGINEER")
   status           String   @default("DRAFT")
-  instructorId     String   @map("instructor_id") // 지식공유자(강의 만든 사람)
+  instructorId     String   @map("instructor_id")
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 
@@ -113,7 +113,6 @@ model Section {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   course   Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  // 참조하고 있는 course 가 삭제됐을 경우 함께 삭제
   lectures Lecture[]
 
   @@map("sections")
@@ -125,7 +124,7 @@ model Lecture {
   description      String?
   order            Int
   duration         Int?
-  isPreview        Boolean  @default(false) @map("is_preview") // 미리보기 강좌 설정
+  isPreview        Boolean  @default(false) @map("is_preview")
   sectionId        String   @map("section_id")
   courseId         String   @map("course_id")
   videoStorageInfo Json?    @map("video_storage_info")
@@ -134,7 +133,6 @@ model Lecture {
 
   section    Section           @relation(fields: [sectionId], references: [id], onDelete: Cascade)
   course     Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  // 참조하고 있는 section or course 가 삭제됐을 경우 함께 삭제
   activities LectureActivity[]
 
   @@map("lectures")
@@ -148,11 +146,9 @@ model CourseCategory {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  courses Course[] 
-  // couse와 couseCategory 는 N:N 관계이므로 서로 리스트를 가짐
-  // 매핑 테이블은 prisma 가 알아서 생성해줌
+  courses Course[]
 
-  @@map("course_categories")  
+  @@map("course_categories")
 }
 
 model CourseEnrollment {
