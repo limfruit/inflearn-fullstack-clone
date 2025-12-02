@@ -229,17 +229,26 @@ export class CoursesController {
   }
 
   @Get(':courseId/reviews')
+  @UseGuards(OptionalAccessTokenGuard)
+  @ApiBearerAuth('access-token')
   @ApiOkResponse({
     description: '코스 리뷰 조회',
     type: CourseReviewsResponseDto,
   })
   getCourseReviews(
+    @Req() req: Request,
     @Param('courseId', ParseUUIDPipe) courseId: string,
     @Query('page', ParseIntPipe) page: number,
     @Query('pageSize', ParseIntPipe) pageSize: number,
     @Query('sort') sort: 'latest' | 'oldest' | 'rating_high' | 'rating_low',
   ) {
-    return this.coursesService.getCourseReviews(courseId, page, pageSize, sort);
+    return this.coursesService.getCourseReviews(
+      courseId,
+      page,
+      pageSize,
+      sort,
+      req.user?.sub,
+    );
   }
 
   @Post(':courseId/reviews')
@@ -310,6 +319,18 @@ export class CoursesController {
       req.user.sub,
       instructorReplyDto,
     );
+  }
+
+  @Get('reviews/instructor')
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOkResponse({
+    description: '강사의 모든 강의의 리뷰 조회',
+    type: CourseReviewEntity,
+    isArray: true,
+  })
+  getInstructorReviews(@Req() req: Request) {
+    return this.coursesService.getInstructorReviews(req.user.sub);
   }
 }
 

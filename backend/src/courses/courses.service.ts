@@ -464,6 +464,7 @@ export class CoursesService {
     page: number,
     pageSize: number,
     sort: 'latest' | 'oldest' | 'rating_high' | 'rating_low',
+    userId?: string,
   ): Promise<CourseReviewsResponseDto> {
     const where: Prisma.CourseReviewWhereInput = {
       courseId,
@@ -486,14 +487,36 @@ export class CoursesService {
     const hasNext = page < totalPages;
     const hasPrev = page > 1;
 
+    const myReview =
+      userId &&
+      (await this.prisma.courseReview.findUnique({
+        where: {
+          userId_courseId: {
+            userId,
+            courseId,
+          },
+        },
+      }
+    ));
+      
     const reviews = await this.prisma.courseReview.findMany({
       where,
       orderBy,
       skip,
       take: pageSize,
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+      },
     });
 
     return {
+      myReviewExists: !!myReview, // !! -> 있는지없는지 true, false 로 변환
       totalReviewCount: totalItems,
       currentPage: page,
       pageSize,
@@ -547,10 +570,18 @@ export class CoursesService {
 
     const review = await this.prisma.courseReview.create({
       data: {
-        userId,
-        courseId,
         content: createReviewDto.content,
         rating: createReviewDto.rating,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+        course: {
+          connect: {
+            id: courseId,
+          },
+        },
       },
     });
 
@@ -649,5 +680,32 @@ export class CoursesService {
     });
 
     return updatedReview as unknown as CourseReviewEntity;
+  }
+
+  async getInstructorReviews(userId: string): Promise<CourseReviewEntity[]> {
+    const reviews = await this.prisma.courseReview.findMany({
+      where: {
+        course: {
+          instructorId: userId,
+        },
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+        course: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+      },
+    });
+
+    return reviews as unknown as CourseReviewEntity[];
   }
 }

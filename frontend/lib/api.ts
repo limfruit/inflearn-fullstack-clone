@@ -4,16 +4,23 @@ import {
   categoriesControllerFindAll,
   coursesControllerAddFavorite,
   coursesControllerCreate,
+  coursesControllerCreateInstructorReply,
+  coursesControllerCreateReview,
+  coursesControllerDeleteReview,
   coursesControllerEnrollCourse,
   coursesControllerFindAllMyCourses,
   coursesControllerFindOne,
+  coursesControllerGetCourseReviews,
   coursesControllerGetFavorite,
+  coursesControllerGetInstructorReviews,
   coursesControllerGetLectureActivity,
   coursesControllerGetMyFavorites,
   coursesControllerRemoveFavorite,
   coursesControllerSearch,
   coursesControllerUpdate,
-  CoursesControllerUpdateData,
+  coursesControllerUpdateReview,
+  CreateReviewDto,
+  InstructorReplyDto,
   lecturesControllerCreate,
   lecturesControllerDelete,
   lecturesControllerUpdate,
@@ -26,10 +33,13 @@ import {
   UpdateCourseDto,
   UpdateLectureActivityDto,
   UpdateLectureDto,
+  UpdateReviewDto,
   UpdateUserDto,
   usersControllerGetProfile,
   usersControllerUpdateProfile,
 } from "@/generated/openapi-client";
+import { Bodoni_Moda } from "next/font/google";
+import path from "path";
 
 export const getAllCategories = async () => {
   const { data, error } = await categoriesControllerFindAll();
@@ -273,3 +283,81 @@ export const getAllLectureActivities = async (courseId: string) => {
 
   return {data, error}
 }
+
+export const getCourseReviews = async (
+  courseId: string,
+  page: number,
+  pageSize: number,
+  sort: 'latest' | 'oldest' | 'rating_high' | 'rating_low' = 'latest',
+) => {
+  const {data, error} = await coursesControllerGetCourseReviews({
+    path: {
+      courseId,
+    },
+    query: {
+      page,
+      pageSize,
+      sort,
+    }
+  });
+  
+  return {data, error};
+};
+
+export const createReview = async (
+  courseId: string,
+  createReveiwDto: CreateReviewDto
+) => {
+  const { data, error } = await coursesControllerCreateReview({
+    path: {
+      courseId,
+    },
+    body: createReveiwDto,
+  });
+
+  return { data, error };
+};
+
+export const updateReview = async (
+  reviewId: string,
+  updateReviewDto: UpdateReviewDto
+) => {
+  const { data, error } = await coursesControllerUpdateReview({
+    path: {
+      reviewId,
+    },
+    body: updateReviewDto,
+  });
+
+  return { data, error };
+};
+
+export const deleteReview = async (reviewId: string) => {
+  const { data, error } = await coursesControllerDeleteReview({
+    path: {
+      reviewId,
+    },
+  });
+
+  return { data, error };
+};
+
+export const getInstructorReviews = async () => {
+  const { data, error } = await coursesControllerGetInstructorReviews();
+
+  return { data, error };
+};
+
+export const createInstructorReply = async (
+  reviewId: string,
+  instructorReplyDto: InstructorReplyDto
+) => {
+  const { data, error } = await coursesControllerCreateInstructorReply({
+    path: {
+      reviewId,
+    },
+    body: instructorReplyDto,
+  });
+
+  return { data, error };
+};

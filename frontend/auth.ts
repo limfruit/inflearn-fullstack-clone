@@ -70,5 +70,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
   pages: {},
-  callbacks: {},
+  callbacks: {
+    // https://authjs.dev/guides/extending-the-session 참고
+    // callbacks: {} 로 비워놓을 경우 user id 정보를 세션에 저장하지 않음
+    jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    session({ session, token }) {
+      (session as any).user.id = token.id;
+      return session;
+    },
+  },
 })
