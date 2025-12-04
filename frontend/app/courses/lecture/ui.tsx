@@ -51,7 +51,6 @@ import * as api from "@/lib/api";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -60,9 +59,6 @@ import { toast } from "sonner";
 import { User } from "next-auth";
 import QuestionsSection from "./_components/questions-section";
 
-/*****************
- * Helper Utils  *
- *****************/
 function formatSecondsToMinSec(seconds: number | undefined) {
   if (!seconds) return "00:00";
   const mins = Math.floor(seconds / 60)
@@ -74,9 +70,6 @@ function formatSecondsToMinSec(seconds: number | undefined) {
   return `${mins}:${secs}`;
 }
 
-/*****************
- * Sub Components *
- *****************/
 function LectureRow({
   lecture,
   isActive,
@@ -511,9 +504,7 @@ function VideoPlayer({
         </span>
       </div>
 
-      {/* Controls */}
       <div className="absolute bottom-0 left-0 right-0 px-4 pb-3 pt-2 bg-black/70 backdrop-blur flex flex-col gap-2 text-white">
-        {/* progress slider */}
         <Slider
           min={0}
           max={100}
@@ -527,10 +518,8 @@ function VideoPlayer({
             setSeeking(false);
           }}
         />
-        {/* bottom control bar */}
         <div className="flex items-center justify-between gap-4 text-sm">
-          <div className="flex items-center gap-3">
-            {/* play/pause */}
+          <div className="flex items-center gap-3">          
             <button onClick={handlePlayPause} aria-label="play-pause">
               {playing ? (
                 <PauseIcon className="size-4" />
@@ -603,7 +592,6 @@ function VideoPlayer({
         </div>
       </div>
 
-      {/* Review Modal */}
       <ReviewModal
         courseId={courseId}
         isOpen={showReviewModal}
@@ -692,7 +680,6 @@ export default function UI({
 
   return (
     <div className="flex w-full h-screen bg-black fixed inset-0">
-      {/* Video area */}
       <div className="flex-1 relative">
         <VideoPlayer
           lecture={currentLecture}
@@ -715,7 +702,6 @@ export default function UI({
         )}
       </div>
 
-      {/* Sidebar */}
       {sidebarOpen && (
         <Sidebar
           sections={course.sections}

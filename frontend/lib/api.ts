@@ -33,6 +33,7 @@ import {
   mediaControllerUploadMedia,
   questionsControllerCreate,
   questionsControllerFindAll,
+  questionsControllerFindAllByInstructorId,
   questionsControllerFindOne,
   questionsControllerRemove,
   questionsControllerUpdate,
@@ -466,6 +467,12 @@ export const removeComment = async (commentId: string) => {
       commentId,
     },
   });
+
+  return { data, error };
+};
+
+export const getAllInstructorQuestions = async () => {
+  const { data, error } = await questionsControllerFindAllByInstructorId({});
 
   return { data, error };
 };
