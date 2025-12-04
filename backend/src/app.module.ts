@@ -12,9 +12,10 @@ import { MediaModule } from './media/media.module';
 import { UsersModule } from './users/users.module';
 import { CommentsModule } from './comments/comments.module';
 import { QuestionsModule } from './questions/questions.module';
+import { CartsModule } from './carts/carts.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal : true }), AuthModule, PrismaModule, CoursesModule, LecturesModule, SectionsModule, CategoriesModule, MediaModule, UsersModule, CommentsModule, QuestionsModule],
+  imports: [ConfigModule.forRoot({ isGlobal : true }), AuthModule, PrismaModule, CoursesModule, LecturesModule, SectionsModule, CategoriesModule, MediaModule, UsersModule, CommentsModule, QuestionsModule, CartsModule],
   controllers: [AppController],
   providers: [AppService],
 })
