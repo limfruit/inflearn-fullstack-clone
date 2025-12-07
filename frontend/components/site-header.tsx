@@ -39,6 +39,7 @@ export default function SiteHeader({
                         || pathname.includes("/search");
   const [search, setSearch] = useState("");
   const router = useRouter();
+  const [cartOpen, setCartOpen] = useState(false);
 
   const cartItemsQuery = useQuery({
     queryFn: () => api.getCartItems(),
@@ -132,11 +133,11 @@ export default function SiteHeader({
         </Link>
         
         {/* 장바구니 아이콘 + Popover */}
-        <Popover>
+        <Popover open={cartOpen} onOpenChange={setCartOpen}>
           <PopoverTrigger asChild>
-            <button className="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
-              <ShoppingCart className="size-5 text-gray-600" />
-              {cartItemsQuery?.data?.data?.totalCount ??
+            <button className="relative p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer">
+              <ShoppingCart className="size-6 text-gray-600" />
+              {/* {cartItemsQuery?.data?.data?.totalCount ??
                 (0 > 0 && (
                   <Badge
                     variant="destructive"
@@ -144,7 +145,16 @@ export default function SiteHeader({
                   >
                     {cartItemsQuery?.data?.data?.totalCount}
                   </Badge>
-                ))}
+                ))} */}
+              {/* 장바구니 totalCount가 1 이상일 때만 */}
+              {((cartItemsQuery?.data?.data?.totalCount ?? 0) > 0) && (
+                <Badge
+                  variant="destructive"
+                  className="absolute -top-1 -right-1 h-5 min-w-5 px-1 flex items-center justify-center text-[10px] leading-none rounded-full bg-red-500 text-white"
+                >
+                  {cartItemsQuery?.data?.data?.totalCount}
+                </Badge>
+              )}
             </button>
           </PopoverTrigger>
           <PopoverContent align="end" className="w-80 p-0">
@@ -205,7 +215,10 @@ export default function SiteHeader({
 
                 <div className="p-3 bg-gray-50">
                   <Button
-                    onClick={() => router.push("/carts")}
+                    onClick={() => {
+                      setCartOpen(false);    
+                      router.push("/carts");
+                    }}
                     className="w-full bg-[#1dc078] hover:bg-[#1dc078]/90 text-white font-medium"
                   >
                     수강바구니에서 전체보기
@@ -220,7 +233,7 @@ export default function SiteHeader({
         {session ? (
           <Popover>
             <PopoverTrigger asChild>
-              <div className="ml-2 cursor-pointer">
+              <div className="cursor-pointer">
                 <Avatar>
                   {profile?.image ? (
                     <img
@@ -251,12 +264,18 @@ export default function SiteHeader({
               </div>
               <button
                 className="w-full text-left px-4 py-3 hover:bg-gray-100 focus:outline-none cursor-pointer"
+                onClick={() => router.push("/my/courses")}
+              >
+                <div className="font-semibold text-gray-800">내 학습</div>
+              </button>
+              <button
+                className="w-full text-left px-4 py-3 hover:bg-gray-100 focus:outline-none cursor-pointer"
                 onClick={() => (window.location.href = "/my/settings/account")}
               >
                 <div className="font-semibold text-gray-800">프로필 수정</div>
               </button>
               <button
-                className="w-full text-left px-4 py-3 hover:bg-gray-100 focus:outline-none border-t border-gray-100 cursor-pointer"
+                className="w-full text-left px-4 py-3 hover:bg-gray-100 focus:outline-none cursor-pointer"
                 onClick={() => signOut()}
               >
                 <div className="font-semibold text-gray-800">로그아웃</div>

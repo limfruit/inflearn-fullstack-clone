@@ -70,6 +70,16 @@ export default function CourseCard({ user, course }: CourseCardProps) {
   const isFavoriteDisabled =
     addFavoriteMutation.isPending || removeFavoriteMutation.isPending;
   
+  const cartItemsQuery = useQuery({
+    queryKey: ["cart-items"],
+    queryFn: () => api.getCartItems(),
+  });
+
+  const isInCart = cartItemsQuery.data?.data?.items?.some(
+    (item) => item.courseId === course.id
+  ) ?? false;
+
+
   const addToCartMutation = useMutation({
     mutationFn: () => api.addToCart(course.id),
     onSuccess: () => {
@@ -84,6 +94,11 @@ export default function CourseCard({ user, course }: CourseCardProps) {
    
     if (!user) {
       alert("로그인 후 이용해주세요.");
+      return;
+    }
+
+    if (isInCart) {
+      toast.success(`"${course.title}"이(가) 이미 장바구니에 담겨있습니다.`);
       return;
     }
 

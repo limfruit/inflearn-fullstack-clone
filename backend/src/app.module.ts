@@ -13,9 +13,10 @@ import { UsersModule } from './users/users.module';
 import { CommentsModule } from './comments/comments.module';
 import { QuestionsModule } from './questions/questions.module';
 import { CartsModule } from './carts/carts.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal : true }), AuthModule, PrismaModule, CoursesModule, LecturesModule, SectionsModule, CategoriesModule, MediaModule, UsersModule, CommentsModule, QuestionsModule, CartsModule],
+  imports: [ConfigModule.forRoot({ isGlobal : true }), AuthModule, PrismaModule, CoursesModule, LecturesModule, SectionsModule, CategoriesModule, MediaModule, UsersModule, CommentsModule, QuestionsModule, CartsModule, PaymentsModule],
   controllers: [AppController],
   providers: [AppService],
 })

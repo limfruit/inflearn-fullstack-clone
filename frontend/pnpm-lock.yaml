@@ -20,6 +20,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.66.0(react@19.0.0))
+      '@portone/browser-sdk':
+        specifier: 0.0.23
+        version: 0.0.23
       '@prisma/client':
         specifier: 5.12.0
         version: 5.12.0(prisma@5.12.0)
@@ -904,6 +907,9 @@ packages:
 
   '@panva/hkdf@1.2.1':
     resolution: {integrity: sha512-6oclG6Y3PiDFcoyk8srjLfVKyMfVCKJ27JwNPViuXziFpmdz+MZnZN/aKY0JGXgYuO/VghU0jcOAZgWXZ1Dmrw==}
+
+  '@portone/browser-sdk@0.0.23':
+    resolution: {integrity: sha512-fgUkPdNjvBArrcuBCtbGGhkHDhrR39WBFmXa3XNWjpYYbIS2ltOpw5R8Eu5SzSR9e/r8GSMmCuOhYr0f2j2Kng==}
 
   '@prisma/client@5.12.0':
     resolution: {integrity: sha512-bk/+KPpRm0+IzqFCtAxrj+/TNiHzulspnO+OkysaYY/atc/eX0Gx8V3tTLxbHKVX0LKD4Hi8KKCcSbU1U72n7Q==}
@@ -3559,6 +3565,8 @@ snapshots:
       '@ckeditor/ckeditor5-ui': 47.2.0
       '@ckeditor/ckeditor5-utils': 47.2.0
       ckeditor5: 47.2.0
+    transitivePeerDependencies:
+      - supports-color
 
   '@ckeditor/ckeditor5-integrations-common@2.2.3(ckeditor5@47.2.0)':
     dependencies:
@@ -4261,6 +4269,8 @@ snapshots:
     optional: true
 
   '@panva/hkdf@1.2.1': {}
+
+  '@portone/browser-sdk@0.0.23': {}
 
   '@prisma/client@5.12.0(prisma@5.12.0)':
     optionalDependencies:
