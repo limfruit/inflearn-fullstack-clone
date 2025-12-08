@@ -926,16 +926,18 @@ function FloatingMenu({
                 수강신청 하기
               </button>
             )}
-            <button
-              onClick={handleCart}
-              className="cursor-pointer w-full py-2 px-4 rounded-md border font-medium"
-            >
-              {cartItemsQuery.data?.data?.items?.some(
-                (item) => item.courseId === course.id
-              )
-                ? "수강 바구니로 이동"
-                : "바구니에 담기"}
-            </button>
+            {!isEnrolled && (
+              <button
+                onClick={handleCart}
+                className="cursor-pointer w-full py-2 px-4 rounded-md border font-medium"
+              >
+                {cartItemsQuery.data?.data?.items?.some(
+                  (item) => item.courseId === course.id
+                )
+                  ? "수강 바구니로 이동"
+                  : "바구니에 담기"}
+              </button>
+            )}
             <button
               onClick={handleFavorite}
               disabled={isFavoriteDisabled}
