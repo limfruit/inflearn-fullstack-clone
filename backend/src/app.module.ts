@@ -15,9 +15,16 @@ import { QuestionsModule } from './questions/questions.module';
 import { CartsModule } from './carts/carts.module';
 import { PaymentsModule } from './payments/payments.module';
 import { BatchModule } from './batch/batch.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal : true }), AuthModule, PrismaModule, CoursesModule, LecturesModule, SectionsModule, CategoriesModule, MediaModule, UsersModule, CommentsModule, QuestionsModule, CartsModule, PaymentsModule, BatchModule],
+  imports: [
+    CacheModule.register({
+      ttl: 60 * 1000, // 1분 유지
+      max: 1000, // 최대 1000개의 항목이 캐시될 수 있음
+      isGlobal: true,
+    }),
+    ConfigModule.forRoot({ isGlobal : true }), AuthModule, PrismaModule, CoursesModule, LecturesModule, SectionsModule, CategoriesModule, MediaModule, UsersModule, CommentsModule, QuestionsModule, CartsModule, PaymentsModule, BatchModule],
   controllers: [AppController],
   providers: [AppService],
 })
