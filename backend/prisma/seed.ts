@@ -8,12 +8,12 @@ async function main() {
   await prisma.$connect();
 
   // 1. 기존 유저 존재 여부 체크
-//   const existingUser = await prisma.user.findFirst();
-const existingUser = await prisma.user.findUnique({
-    where: {
-      id: "cmi0x16kt0000e4f91l2s6mdn",
-    },
-  });
+  const existingUser = await prisma.user.findFirst();
+// const existingUser = await prisma.user.findUnique({
+//     where: {
+//       id: "cmi0x16kt0000e4f91l2s6mdn",
+//     },
+//   });
   if (!existingUser) {
     console.error(
       '데이터베이스에 유저가 존재하지 않습니다. 먼저 유저를 생성해주세요.',
