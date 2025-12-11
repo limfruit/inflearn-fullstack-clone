@@ -2,6 +2,8 @@ FROM node:20-alpine
 
 RUN npm install -g pnpm
 
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
