@@ -2,7 +2,7 @@ FROM node:20-alpine
 
 RUN npm install -g pnpm
 
-ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV NODE_OPTIONS="--max-old-space-size=1536"
 
 WORKDIR /app
 
