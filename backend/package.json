@@ -36,6 +36,7 @@
     "@nestjs/swagger": "11.1.2",
     "@portone/server-sdk": "0.15.0",
     "@prisma/client": "5.16.1",
+    "@sentry/nestjs": "^10.30.0",
     "cache-manager": "7.0.0",
     "class-validator": "^0.14.2",
     "multer": "^2.0.2",

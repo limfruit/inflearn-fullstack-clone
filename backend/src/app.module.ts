@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { SentryModule, SentryGlobalFilter } from '@sentry/nestjs/setup';
+import { APP_FILTER } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config'
@@ -19,6 +21,8 @@ import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
+    SentryModule.forRoot(),
+
     CacheModule.register({
       ttl: 60 * 1000, // 1분 유지
       max: 1000, // 최대 1000개의 항목이 캐시될 수 있음
@@ -26,6 +30,13 @@ import { CacheModule } from '@nestjs/cache-manager';
     }),
     ConfigModule.forRoot({ isGlobal : true }), AuthModule, PrismaModule, CoursesModule, LecturesModule, SectionsModule, CategoriesModule, MediaModule, UsersModule, CommentsModule, QuestionsModule, CartsModule, PaymentsModule, BatchModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: SentryGlobalFilter,
+    },
+  ],
+  
 })
 export class AppModule {}

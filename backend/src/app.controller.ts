@@ -21,4 +21,9 @@ export class AppController {
     return `유저 이메일: ${req.user?.email}`;
   }
 
+  @Get('/sentry-test')
+  debugSentry() {
+    throw new Error('Sentry Test');
+  }
+
 }
