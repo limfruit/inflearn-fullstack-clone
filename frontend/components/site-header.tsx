@@ -1,7 +1,7 @@
 "use client";
 
 import { CourseCategory, User } from "@/generated/openapi-client";
-import { Layers, Search, ShoppingCart } from "lucide-react";
+import { Search, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,8 @@ import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import * as api from "@/lib/api";
+
+import * as Sentry from "@sentry/nextjs";
 
 export default function SiteHeader({
   session,
@@ -131,6 +133,22 @@ export default function SiteHeader({
             지식공유자
           </Button>
         </Link>
+
+        <Button
+          variant="outline"
+          className="font-semibold border-red-300 text-red-600 hover:bg-red-50 ml-2"
+          onClick={() => {
+            Sentry.captureMessage("Sentry Test Button Click!!!", {
+              level: "info",
+              tags: {
+                feature: "sentry-test",
+                location: "site-header",
+              },
+            });
+          }}
+        >
+          Sentry Test
+        </Button>
         
         {/* 장바구니 아이콘 + Popover */}
         <Popover open={cartOpen} onOpenChange={setCartOpen}>
