@@ -20,8 +20,7 @@ import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import * as api from "@/lib/api";
-
-import * as Sentry from "@sentry/nextjs";
+// import * as Sentry from "@sentry/nextjs";
 
 export default function SiteHeader({
   session,
@@ -134,7 +133,7 @@ export default function SiteHeader({
           </Button>
         </Link>
 
-        <Button
+        {/* <Button
           variant="outline"
           className="font-semibold border-red-300 text-red-600 hover:bg-red-50 ml-2"
           onClick={() => {
@@ -148,7 +147,7 @@ export default function SiteHeader({
           }}
         >
           Sentry Test
-        </Button>
+        </Button> */}
         
         {/* 장바구니 아이콘 + Popover */}
         <Popover open={cartOpen} onOpenChange={setCartOpen}>
