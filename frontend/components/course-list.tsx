@@ -140,16 +140,6 @@ export default async function CourseList({
 
   return (
     <div className="w-full">
-
-<button
-  onClick={async () => {
-    await fetch('/debug-sentry');
-  }}
->
-  Sentry Error Test
-</button>
-
-
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {data.courses.map((course) => (
           <CourseCard key={course.id} course={course} user={session?.user} />
