@@ -386,6 +386,8 @@ function VideoPlayer({
   const [totalDuration, setTotalDuration] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showPlayIcon, setShowPlayIcon] = useState(false);
+  const [iconType, setIconType] = useState<'play' | 'pause'>('play');
 
   useEffect(() => {
     hasSeekOnReadyRef.current = false;
@@ -394,7 +396,13 @@ function VideoPlayer({
   }, [lecture.id]);
 
   const handlePlayPause = () => {
-    setPlaying((p) => !p);
+    setPlaying((p) => {
+      setIconType(!p ? 'pause' : 'play'); 
+      setShowPlayIcon(true);
+      setTimeout(() => setShowPlayIcon(false), 500);
+      return !p;
+    });
+
     updateLectureActivityMutation.mutate({
       duration: playedSeconds,
       isCompleted: played >= 0.95,
@@ -472,133 +480,150 @@ function VideoPlayer({
 
   return (
     <div ref={wrapperRef} className="relative flex-1 h-full bg-black">
-      {/* ReactPlayer maintains 16:9 responsiveness by padding */}
-      <ReactPlayer
-        ref={playerRef}
-        url={videoUrl}
-        playing={playing}
-        muted={muted}
-        volume={volume}
-        width="100%"
-        height="100%"
-        style={{ backgroundColor: "black" }}
-        onProgress={handleProgress}
-        onDuration={setTotalDuration}
-        onEnded={handleEnded}
-        playbackRate={playbackRate}
-        onReady={() => {
-          if (lectureActivity && !hasSeekOnReadyRef.current) {
-            hasSeekOnReadyRef.current = true;
-            playerRef.current?.seekTo(lectureActivity.duration, "seconds");
-          }
-        }}
-      />
-
-      {/* Lecture title overlay */}
-      <div className="absolute top-2 left-2 flex items-center">
-        <button className="cursor-pointer" onClick={() => router.back()}>
-          <ArrowLeftIcon color="white" size={20} />
-        </button>
-        <span className="text-sm md:text-base font-semibold text-white bg-black/60 px-3 py-1 rounded-md">
-          {lecture.title}
-        </span>
-      </div>
-
-      <div className="absolute bottom-0 left-0 right-0 px-4 pb-3 pt-2 bg-black/70 backdrop-blur flex flex-col gap-2 text-white">
-        <Slider
-          min={0}
-          max={100}
-          value={[played * 100]}
-          onValueChange={(v) => {
-            setSeeking(true);
-            handleSeekChange(v);
-          }}
-          onValueCommit={(v) => {
-            handleSeekCommit(v);
-            setSeeking(false);
+      <div
+        onClick={handlePlayPause}
+        className="relative"
+      >
+        {/* ReactPlayer maintains 16:9 responsiveness by padding */}
+        <ReactPlayer
+          ref={playerRef}
+          url={videoUrl}
+          playing={playing}
+          muted={muted}
+          volume={volume}
+          width="100%"
+          height="100%"
+          style={{ backgroundColor: "black" }}
+          onProgress={handleProgress}
+          onDuration={setTotalDuration}
+          onEnded={handleEnded}
+          playbackRate={playbackRate}
+          onReady={() => {
+            if (lectureActivity && !hasSeekOnReadyRef.current) {
+              hasSeekOnReadyRef.current = true;
+              playerRef.current?.seekTo(lectureActivity.duration, "seconds");
+            }
           }}
         />
-        <div className="flex items-center justify-between gap-4 text-sm">
-          <div className="flex items-center gap-3">          
-            <button onClick={handlePlayPause} aria-label="play-pause">
-              {playing ? (
-                <PauseIcon className="size-4" />
-              ) : (
-                <PlayIcon className="size-4" />
-              )}
-            </button>
 
-            {/* time */}
-            <span className="tabular-nums text-xs">
-              {formatTime(played * totalDuration)} / {formatTime(totalDuration)}
-            </span>
-
-            {/* volume */}
-            <button onClick={handleMute} aria-label="mute">
-              {muted || volume === 0 ? (
-                <VolumeXIcon className="size-4" />
+        {showPlayIcon && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="animate-in fade-in zoom-in duration-200">
+              {iconType === 'play' ? (
+                <PauseIcon className="size-20 text-green-300 drop-shadow-2xl" strokeWidth={1.5} />
               ) : (
-                <Volume2Icon className="size-4" />
+                <PlayIcon className="size-20 text-green-300 drop-shadow-2xl" strokeWidth={1.5} />
               )}
-            </button>
-            <Slider
-              className="w-24"
-              min={0}
-              max={100}
-              value={[muted ? 0 : volume * 100]}
-              onValueChange={handleVolumeChange}
-            />
+            </div>
           </div>
-
-          <div className="flex items-center gap-3">
-            {/* 수강평 버튼 */}
-            {user && (
-              <button
-                onClick={() => setShowReviewModal(true)}
-                className="flex items-center gap-1 px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded-md transition-colors"
-                aria-label="수강평 작성"
-              >
-                <MessageSquareIcon className="size-3" />
-                <span>수강평</span>
-              </button>
-            )}
-
-            {/* speed select */}
-            <Select
-              value={playbackRate.toString()}
-              onValueChange={(v) => setPlaybackRate(parseFloat(v))}
-            >
-              <SelectTrigger className="w-16 h-8 bg-black/20 border border-white/20 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-black text-white border border-white/20">
-                {[0.5, 1, 1.25, 1.5, 2].map((r) => (
-                  <SelectItem key={r} value={r.toString()} className="text-xs">
-                    {r}x
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* fullscreen */}
-            <button onClick={toggleFullscreen} aria-label="fullscreen">
-              {isFullscreen ? (
-                <MinimizeIcon className="size-4" />
-              ) : (
-                <MaximizeIcon className="size-4" />
-              )}
-            </button>
-          </div>
-        </div>
+        )}
       </div>
 
-      <ReviewModal
-        courseId={courseId}
-        isOpen={showReviewModal}
-        onClose={() => setShowReviewModal(false)}
-        setShowReviewModal={setShowReviewModal}
-      />
-    </div>
+        {/* Lecture title overlay */}
+        <div className="absolute top-2 left-2 flex items-center">
+          <button className="cursor-pointer" onClick={() => router.back()}>
+            <ArrowLeftIcon color="white" size={20} />
+          </button>
+          <span className="text-sm md:text-base font-semibold text-white bg-black/60 px-3 py-1 rounded-md">
+            {lecture.title}
+          </span>
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 px-4 pb-3 pt-2 bg-black/70 backdrop-blur flex flex-col gap-2 text-white">
+          <Slider
+            min={0}
+            max={100}
+            value={[played * 100]}
+            onValueChange={(v) => {
+              setSeeking(true);
+              handleSeekChange(v);
+            }}
+            onValueCommit={(v) => {
+              handleSeekCommit(v);
+              setSeeking(false);
+            }}
+          />
+          <div className="flex items-center justify-between gap-4 text-sm">
+            <div className="flex items-center gap-3">          
+              <button onClick={handlePlayPause} aria-label="play-pause">
+                {playing ? (
+                  <PauseIcon className="size-4" />
+                ) : (
+                  <PlayIcon className="size-4" />
+                )}
+              </button>
+
+              {/* time */}
+              <span className="tabular-nums text-xs">
+                {formatTime(played * totalDuration)} / {formatTime(totalDuration)}
+              </span>
+
+              {/* volume */}
+              <button onClick={handleMute} aria-label="mute">
+                {muted || volume === 0 ? (
+                  <VolumeXIcon className="size-4" />
+                ) : (
+                  <Volume2Icon className="size-4" />
+                )}
+              </button>
+              <Slider
+                className="w-24"
+                min={0}
+                max={100}
+                value={[muted ? 0 : volume * 100]}
+                onValueChange={handleVolumeChange}
+              />
+            </div>
+
+            <div className="flex items-center gap-3">
+              {/* 수강평 버튼 */}
+              {user && (
+                <button
+                  onClick={() => setShowReviewModal(true)}
+                  className="flex items-center gap-1 px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded-md transition-colors"
+                  aria-label="수강평 작성"
+                >
+                  <MessageSquareIcon className="size-3" />
+                  <span>수강평</span>
+                </button>
+              )}
+
+              {/* speed select */}
+              <Select
+                value={playbackRate.toString()}
+                onValueChange={(v) => setPlaybackRate(parseFloat(v))}
+              >
+                <SelectTrigger className="w-16 h-8 bg-black/20 border border-white/20 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-black text-white border border-white/20">
+                  {[0.5, 1, 1.25, 1.5, 2].map((r) => (
+                    <SelectItem key={r} value={r.toString()} className="text-xs">
+                      {r}x
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* fullscreen */}
+              <button onClick={toggleFullscreen} aria-label="fullscreen">
+                {isFullscreen ? (
+                  <MinimizeIcon className="size-4" />
+                ) : (
+                  <MaximizeIcon className="size-4" />
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <ReviewModal
+          courseId={courseId}
+          isOpen={showReviewModal}
+          onClose={() => setShowReviewModal(false)}
+          setShowReviewModal={setShowReviewModal}
+        />
+      </div>
   );
 }
 
