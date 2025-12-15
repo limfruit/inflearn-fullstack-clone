@@ -15,12 +15,74 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import { CATEGORY_ICONS } from "@/app/constants/category-icons";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import * as api from "@/lib/api";
 // import * as Sentry from "@sentry/nextjs";
+
+function RollingPlaceholder() {
+  const messages = [
+    "우리는 성장 기회의 평등을 추구합니다.",
+    "성장하는 모든 사람을 응원합니다.",
+    "실전에 필요한 지식을 지금 배워보세요.",
+    "우리는 성장 기회의 평등을 추구합니다.",
+    "요즘 관심 있는 주제나 기술이 있나요?",
+    "진짜 성장을 도와줄 강의를 찾아보세요",
+    "실전에서 쓸 지식을 지금 배워보세요.",
+    "인프런에서 성장 여정을 시작해보세요.",
+    "성장을 위한 콘텐츠가 여기 있어요.",
+    "AI 시대에 필요한 무기, 지금 배워보세요.",
+    "지금 배우고싶은 지식을 찾아보세요.",
+  ];
+
+  const [index, setIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => prev + 1);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (index === messages.length) {
+      const timeout = setTimeout(() => {
+        setIsTransitioning(false);
+        setIndex(0);
+      }, 700);
+      return () => clearTimeout(timeout);
+    } else {
+      const timeout = setTimeout(() => {
+        setIsTransitioning(true);
+      }, 50);
+      return () => clearTimeout(timeout);
+    }
+  }, [index, messages.length]);
+
+  return (
+    <div className="relative h-[32px] overflow-hidden w-full">
+      <div
+        className="flex flex-col"
+        style={{
+          transform: `translateY(-${index * 30}px)`,
+          transition: isTransitioning ? 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+        }}
+      >
+        {messages.map((msg, i) => (
+          <div key={i} className="h-[30px] text-base text-gray-500 opacity-80 flex items-center pl-2">
+            {msg}
+          </div>
+        ))}
+        <div className="h-[30px] text-base text-gray-500 opacity-80 flex items-center pl-2">
+          {messages[0]}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function SiteHeader({
   session,
@@ -39,6 +101,7 @@ export default function SiteHeader({
                         || pathname.includes("/courses")
                         || pathname.includes("/search");
   const [search, setSearch] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
   const router = useRouter();
   const [cartOpen, setCartOpen] = useState(false);
 
@@ -59,6 +122,14 @@ export default function SiteHeader({
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("ko-KR").format(price);
   };
+  
+  const menus = [
+    { label: "강의", icon: "/images/header/course.png" },
+    { label: "챌린지", icon: "/images/header/challenge.png" },
+    { label: "멘토링", icon: "/images/header/mentoring.png" },
+    { label: "클립", icon: "/images/header/clip.png" },
+    { label: "커뮤니티", icon: "/images/header/community.png" },
+  ];
 
   if (!isSiteHeaderNeeded) return null;
 
@@ -68,71 +139,55 @@ export default function SiteHeader({
 
   return (
     <header className="relative site-header w-full bg-white">
-      <div className="header-top flex items-center justify-between px-8 py-3 gap-4">
+
+      {/* 1단: 로고 등 상단바 */}
+      <div className="header-top flex items-center justify-between px-8 py-2 gap-4">
         <div className="logo min-w-[120px]">
           <Link href="/">
             <Image
-              src="/images/inflearn_public_logo.png"
-              className="w-28 h-auto"
+              // src="/images/inflearn_public_logo.png"
+              src="/images/inflearn_logo_default.svg"
+              className="w-29 h-auto"
               width={120}
               height={32}
               alt="inflearn"
             />
           </Link>
         </div>
-        <nav className="main-nav flex gap-6 text-base font-bold text-gray-700">
+
+        {/* <nav className="main-nav flex gap-6 text-base font-bold text-gray-700">
           <Link href="#" className="hover:text-[#1dc078] transition-colors">
+            <Image
+              src="/images/header/course.png"
+              width={32}
+              height={32}
+              alt="course"
+            />
             강의
           </Link>
-          <Link href="#" className="hover:text-[#1dc078] transition-colors">
-            로드맵
-          </Link>
-          <Link href="#" className="hover:text-[#1dc078] transition-colors">
-            멘토링
-          </Link>
-          <Link href="#" className="hover:text-[#1dc078] transition-colors">
-            커뮤니티
-          </Link>
+        </nav> */}
+        <nav className="main-nav flex gap-6 text-base font-bold text-gray-700">
+          {[
+            { href: "#", label: "강의", icon: "/images/header/course.png" },
+            { href: "#", label: "챌린지", icon: "/images/header/challenge.png" },
+            { href: "#", label: "멘토링", icon: "/images/header/mentoring.png" },
+            { href: "#", label: "클립", icon: "/images/header/clip.png" },
+            { href: "#", label: "커뮤니티", icon: "/images/header/community.png" },
+          ].map((menu) => (
+            <Link key={menu.label} href={menu.href} className="hover:text-[#1dc078] transition-colors">
+              <div className="flex items-center gap-1">
+                <Image
+                  src={menu.icon}
+                  width={32}
+                  height={32}
+                  alt={menu.label}
+                />
+                <span>{menu.label}</span>
+              </div>
+            </Link>
+          ))}
         </nav>
-        <div className="flex-1 flex justify-center">
-          <div className="relative flex w-full items-center">
-            <Input
-              type="text"
-              placeholder="나의 진짜 성장을 도와줄 실무 강의를 찾아보세요"
-              className="w-full bg-gray-50 border-gray-200 focus-visible:ring-[#1dc078] pr-10"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  if (search.trim()) {
-                    router.push(`/search?q=${search}`);
-                    }
-                }
-              }}
-            />
-            <button
-              type="button"
-              className="absolute right-2 p-1 text-gray-400 hover:text-[#1dc078] transition-colors"
-              tabIndex={-1}
-              onClick={() => { 
-                if (search.trim()) {
-                router.push(`/search?q=${search}`);
-                }
-              }}
-            >
-              <Search size={20} />
-            </button>
-          </div>
-        </div>
-        <Link href="/instructor">
-          <Button
-            variant="outline"
-            className="font-semibold border-gray-200 hover:border-[#1dc078] hover:text-[#1dc078]"
-          >
-            지식공유자
-          </Button>
-        </Link>
-
+        
         {/* <Button
           variant="outline"
           className="font-semibold border-red-300 text-red-600 hover:bg-red-50 ml-2"
@@ -149,168 +204,302 @@ export default function SiteHeader({
           Sentry Test
         </Button> */}
         
-        {/* 장바구니 아이콘 + Popover */}
-        <Popover open={cartOpen} onOpenChange={setCartOpen}>
-          <PopoverTrigger asChild>
-            <button className="relative p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer">
-              <ShoppingCart className="size-6 text-gray-600" />
-              {/* {cartItemsQuery?.data?.data?.totalCount ??
-                (0 > 0 && (
+        <div className="flex items-center gap-3">
+          <Link href="/instructor">
+            <Button
+              variant="outline"
+              className="font-semibold border-gray-200 hover:border-[#1dc078] hover:text-[#1dc078]"
+            >
+              지식공유자
+            </Button>
+          </Link>
+          
+          {/* 장바구니 아이콘 + Popover */}
+          <Popover open={cartOpen} onOpenChange={setCartOpen}>
+            <PopoverTrigger asChild>
+              <button className="relative p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer">
+                <ShoppingCart className="size-6 text-gray-600" />
+                {/* 장바구니 totalCount가 1 이상일 때만 */}
+                {((cartItemsQuery?.data?.data?.totalCount ?? 0) > 0) && (
                   <Badge
                     variant="destructive"
-                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0 bg-red-500"
+                    className="absolute -top-1 -right-1 h-5 min-w-5 px-1 flex items-center justify-center text-[10px] leading-none rounded-full bg-red-500 text-white"
                   >
                     {cartItemsQuery?.data?.data?.totalCount}
                   </Badge>
-                ))} */}
-              {/* 장바구니 totalCount가 1 이상일 때만 */}
-              {((cartItemsQuery?.data?.data?.totalCount ?? 0) > 0) && (
-                <Badge
-                  variant="destructive"
-                  className="absolute -top-1 -right-1 h-5 min-w-5 px-1 flex items-center justify-center text-[10px] leading-none rounded-full bg-red-500 text-white"
-                >
-                  {cartItemsQuery?.data?.data?.totalCount}
-                </Badge>
-              )}
-            </button>
-          </PopoverTrigger>
-          <PopoverContent align="end" className="w-80 p-0">
-            <div className="p-4 border-b border-gray-100">
-              <h3 className="font-semibold text-gray-800">수강바구니</h3>
-            </div>
-
-            {cartItemsQuery?.data?.data?.totalCount === 0 ? (
-              <div className="p-4 text-center text-gray-500">
-                장바구니가 비어있습니다.
+                )}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-80 p-0">
+              <div className="p-4 border-b border-gray-100">
+                <h3 className="font-semibold text-gray-800">수강바구니</h3>
               </div>
-            ) : (
-              <>
-                <div className="max-h-64 overflow-y-auto">
-                  {recentCartItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0"
-                    >
-                      <div className="relative w-12 h-8 flex-shrink-0">
-                        {item.course.thumbnailUrl && (
-                          <Image
-                            src={item.course.thumbnailUrl}
-                            alt={item.course.title}
-                            fill
-                            className="rounded object-cover"
-                          />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-medium text-gray-900 truncate">
-                          {item.course.title}
-                        </h4>
-                        <p className="text-xs text-gray-500">
-                          {item.course.instructor.name}
-                        </p>
-                        <div className="flex items-center gap-2 mt-1">
-                          {item.course.discountPrice &&
-                          item.course.discountPrice < item.course.price ? (
-                            <>
-                              <span className="text-xs font-semibold text-gray-900">
-                                ₩{formatPrice(item.course.discountPrice)}
-                              </span>
-                              <span className="text-xs text-gray-400 line-through">
-                                ₩{formatPrice(item.course.price)}
-                              </span>
-                            </>
-                          ) : (
-                            <span className="text-xs font-semibold text-gray-900">
-                              ₩{formatPrice(item.course.price)}
-                            </span>
+
+              {cartItemsQuery?.data?.data?.totalCount === 0 ? (
+                <div className="p-4 text-center text-gray-500">
+                  장바구니가 비어있습니다.
+                </div>
+              ) : (
+                <>
+                  <div className="max-h-64 overflow-y-auto">
+                    {recentCartItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0"
+                      >
+                        <div className="relative w-12 h-8 flex-shrink-0">
+                          {item.course.thumbnailUrl && (
+                            <Image
+                              src={item.course.thumbnailUrl}
+                              alt={item.course.title}
+                              fill
+                              className="rounded object-cover"
+                            />
                           )}
                         </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium text-gray-900 truncate">
+                            {item.course.title}
+                          </h4>
+                          <p className="text-xs text-gray-500">
+                            {item.course.instructor.name}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            {item.course.discountPrice &&
+                            item.course.discountPrice < item.course.price ? (
+                              <>
+                                <span className="text-xs font-semibold text-gray-900">
+                                  ₩{formatPrice(item.course.discountPrice)}
+                                </span>
+                                <span className="text-xs text-gray-400 line-through">
+                                  ₩{formatPrice(item.course.price)}
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-xs font-semibold text-gray-900">
+                                ₩{formatPrice(item.course.price)}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="p-3 bg-gray-50">
-                  <Button
-                    onClick={() => {
-                      setCartOpen(false);    
-                      router.push("/carts");
-                    }}
-                    className="w-full bg-[#1dc078] hover:bg-[#1dc078]/90 text-white font-medium"
-                  >
-                    수강바구니에서 전체보기
-                  </Button>
-                </div>
-              </>
-            )}
-          </PopoverContent>
-        </Popover>
-
-        {/* Avatar + Popover or 로그인 버튼 */}
-        {session ? (
-          <Popover>
-            <PopoverTrigger asChild>
-              <div className="cursor-pointer">
-                <Avatar>
-                  {profile?.image ? (
-                    <img
-                      src={profile.image}
-                      alt="avatar"
-                      className="w-full h-full object-cover rounded-full"
-                    />
-                  ) : (
-                    <AvatarFallback>
-                      <span role="img" aria-label="user">
-                        👤
-                      </span>
-                    </AvatarFallback>
-                  )}
-                </Avatar>
-              </div>
-            </PopoverTrigger>
-            <PopoverContent align="end" className="w-56 p-0">
-              <div className="px-4 py-3 border-b border-gray-100">
-                <div className="font-semibold text-gray-800">
-                  {profile?.name || profile?.email || "내 계정"}
-                </div>
-                {profile?.email && (
-                  <div className="text-xs text-gray-500 mt-1">
-                    {profile.email}
+                    ))}
                   </div>
-                )}
-              </div>
-              <button
-                className="w-full text-left px-4 py-3 hover:bg-gray-100 focus:outline-none cursor-pointer"
-                onClick={() => router.push("/my/courses")}
-              >
-                <div className="font-semibold text-gray-800">내 학습</div>
-              </button>
-              <button
-                className="w-full text-left px-4 py-3 hover:bg-gray-100 focus:outline-none cursor-pointer"
-                onClick={() => (window.location.href = "/my/settings/account")}
-              >
-                <div className="font-semibold text-gray-800">프로필 수정</div>
-              </button>
-              <button
-                className="w-full text-left px-4 py-3 hover:bg-gray-100 focus:outline-none cursor-pointer"
-                onClick={() => signOut()}
-              >
-                <div className="font-semibold text-gray-800">로그아웃</div>
-              </button>
+
+                  <div className="p-3 bg-gray-50">
+                    <Button
+                      onClick={() => {
+                        setCartOpen(false);    
+                        router.push("/carts");
+                      }}
+                      className="w-full bg-[#1dc078] hover:bg-[#1dc078]/90 text-white font-medium"
+                    >
+                      수강바구니에서 전체보기
+                    </Button>
+                  </div>
+                </>
+              )}
             </PopoverContent>
           </Popover>
-        ) : (
-          <Link href="/signin">
-            <Button
-              variant="outline"
-              className="font-semibold border-gray-200 hover:border-[#1dc078] hover:text-[#1dc078] ml-2"
-            >
-              로그인
-            </Button>
-          </Link>
-        )}
+
+          {/* Avatar + Popover or 로그인 버튼 */}
+          {session ? (
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className="cursor-pointer">
+                  <Avatar>
+                    {profile?.image ? (
+                      <img
+                        src={profile.image}
+                        alt="avatar"
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    ) : (
+                      <AvatarFallback>
+                        <span role="img" aria-label="user">
+                          👤
+                        </span>
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-56 p-0">
+                <div className="px-4 py-3 border-b border-gray-100">
+                  <div className="font-semibold text-gray-800">
+                    {profile?.name || profile?.email || "내 계정"}
+                  </div>
+                  {profile?.email && (
+                    <div className="text-xs text-gray-500 mt-1">
+                      {profile.email}
+                    </div>
+                  )}
+                </div>
+                <button
+                  className="w-full text-left px-4 py-3 hover:bg-gray-100 focus:outline-none cursor-pointer"
+                  onClick={() => router.push("/my/courses")}
+                >
+                  <div className="font-semibold text-gray-800">내 학습</div>
+                </button>
+                <button
+                  className="w-full text-left px-4 py-3 hover:bg-gray-100 focus:outline-none cursor-pointer"
+                  onClick={() => (window.location.href = "/my/settings/account")}
+                >
+                  <div className="font-semibold text-gray-800">프로필 수정</div>
+                </button>
+                <button
+                  className="w-full text-left px-4 py-3 hover:bg-gray-100 focus:outline-none cursor-pointer"
+                  onClick={() => signOut()}
+                >
+                  <div className="font-semibold text-gray-800">로그아웃</div>
+                </button>
+              </PopoverContent>
+            </Popover>
+          ) : (
+            <Link href="/signin">
+              <Button
+                variant="outline"
+                className="font-semibold border-gray-200 hover:border-[#1dc078] hover:text-[#1dc078] ml-2"
+              >
+                로그인
+              </Button>
+            </Link>
+          )}
+        </div>
       </div>
-      {/* 하단 카테고리 */}
+
+      {/* 2단: 검색창 */}
+      {/* <div className="flex-1 flex justify-center px-4 py-4">
+        <div className="relative flex w-full items-center max-w-lg">
+          <Input
+            type="text"
+            placeholder="나의 진짜 성장을 도와줄 실무 강의를 찾아보세요"
+            className="w-full rounded-full bg-gray-50 border-gray-200 focus-visible:ring-[#1dc078] pr-10"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                if (search.trim()) {
+                  router.push(`/search?q=${search}`);
+                }
+              }
+            }}
+          />
+          <button
+            type="button"
+            className="absolute right-2 p-1 text-gray-400 hover:text-[#1dc078] transition-colors"
+            tabIndex={-1}
+            onClick={() => { 
+              if (search.trim()) {
+                router.push(`/search?q=${search}`);
+              }
+            }}
+          >
+            <Search size={20} />
+          </button>
+        </div>
+      </div> */}
+
+      {/* 2단: 검색창 */}
+      <div className="flex justify-center px-4 py-4">
+        <div className={`relative flex w-full max-w-xl items-center bg-white rounded-full shadow-sm min-h-[58px]
+        ${isFocused 
+            ? 'border-2 border-[#1dc078] shadow-lg' 
+            : 'border border-gray-200'
+        }`}
+        >
+          {/* 메뉴 드롭다운 */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="flex items-center px-3 py-2 gap-2 hover:bg-gray-50 rounded-l-full cursor-pointer">
+                <Image
+                  src={menus[0].icon}
+                  width={30}
+                  height={23}
+                  alt={menus[0].label}
+                />
+                <svg
+                  aria-hidden="true"
+                  focusable="false"
+                  data-prefix="fas"
+                  data-icon="caret-down"
+                  className="svg-inline--fa fa-caret-down"
+                  role="img"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 320 512"
+                  width={10}
+                  height={12}
+                  style={{ 
+                    // fontSize: "12px", 
+                    color: "rgb(33, 37, 41)" }}
+                >
+                  <path
+                    fill="currentColor"
+                    d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"
+                  />
+                </svg>
+                {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.08 1.04l-4.24 4.25a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                </svg> */}
+              </button>
+            </PopoverTrigger>
+
+            {/* 드롭다운 메뉴 목록 */}
+            <PopoverContent align="start" className="w-36 p-1 rounded-md shadow-md">
+              <div className="flex flex-col">
+                {menus.map((menu) => (
+                  <button
+                    key={menu.label}
+                    className="flex items-center px-3 py-2 hover:bg-gray-100 gap-2 text-sm text-gray-700 rounded-md"
+                    onClick={() => {
+                      // 선택 기능 넣을 수 있음
+                    }}
+                  >
+                    <Image src={menu.icon} width={18} height={18} alt={menu.label} />
+                    <span>{menu.label}</span>
+                  </button>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          {/* 입력창 */}
+          {!search && !isFocused && (
+            <div className="absolute left-12 ml-8 top-1/2 -translate-y-1/2 w-[calc(100%-100px)] pointer-events-none">
+              <RollingPlaceholder />
+            </div>
+          )}
+          <input
+            type="text"
+            className="flex-1 text-sm px-4 py-3 bg-transparent placeholder:text-gray-400 focus:outline-none"
+            // placeholder={placeholderList[placeholderIndex]}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && search.trim()) {
+                router.push(`/search?q=${search}`);
+              }
+            }}
+          />          
+
+          {/* 검색 버튼 */}
+          <button
+            type="button"
+            className="bg-[#1dc078] hover:bg-[#1dc078]/90 text-white rounded-full w-10 h-10 flex items-center justify-center mr-2"
+            onClick={() => {
+              if (search.trim()) {
+                router.push(`/search?q=${search}`);
+              }
+            }}
+          >
+            <Search size={20} />
+          </button>
+        </div>
+      </div>  
+
+      {/* 3단: 카테고리 */}
       <div className="header-bottom bg-white px-8">
         {isCategoryNeeded && (
           <nav className="category-nav flex justify-between gap-6 py-4 overflow-x-auto scrollbar-none">
