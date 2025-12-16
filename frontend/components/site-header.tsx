@@ -20,6 +20,7 @@ import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import * as api from "@/lib/api";
+import LoginModal from "./login-modal";
 // import * as Sentry from "@sentry/nextjs";
 
 function RollingPlaceholder() {
@@ -95,11 +96,15 @@ export default function SiteHeader({
 }) {
   const pathname = usePathname();
   const isSiteHeaderNeeded =
+  !pathname.match(/^\/signup/) &&
   !pathname.match(/^\/course\/[0-9a-f-]+(\/edit|\/edit\/.*)$/) &&
   !pathname.match(/^\/courses\/lecture/);
   const isCategoryNeeded = pathname == "/" 
                         || pathname.includes("/courses")
                         || pathname.includes("/search");
+
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
   const [search, setSearch] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const router = useRouter();
@@ -138,6 +143,7 @@ export default function SiteHeader({
   }
 
   return (
+  <>
     <header className="relative site-header w-full bg-white">
 
       {/* 1단: 로고 등 상단바 */}
@@ -356,14 +362,21 @@ export default function SiteHeader({
               </PopoverContent>
             </Popover>
           ) : (
-            <Link href="/signin">
-              <Button
-                variant="outline"
-                className="font-semibold border-gray-200 hover:border-[#1dc078] hover:text-[#1dc078] ml-2"
-              >
-                로그인
-              </Button>
-            </Link>
+            // <Link href="/signin">
+            //   <Button
+            //     variant="outline"
+            //     className="font-semibold border-gray-200 hover:border-[#1dc078] hover:text-[#1dc078] ml-2"
+            //   >
+            //     로그인
+            //   </Button>
+            // </Link>
+            <Button
+              variant="outline"
+              onClick={() => setIsLoginModalOpen(true)}
+              className="font-semibold border-gray-200 hover:border-[#1dc078] hover:text-[#1dc078] ml-2"
+            >
+              로그인
+            </Button>
           )}
         </div>
       </div>
@@ -530,5 +543,11 @@ export default function SiteHeader({
         => 결국 선이 화면 전체를 차지할 수 있게 됨 (상위 부모가 어떻든 전체를 차지할 수 있음)
       */}
     </header>
+  
+    <LoginModal
+      isOpen={isLoginModalOpen}
+      onClose={() => setIsLoginModalOpen(false)}
+    />
+  </>   
   );
 }
