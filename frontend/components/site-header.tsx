@@ -96,12 +96,16 @@ export default function SiteHeader({
 }) {
   const pathname = usePathname();
   const isSiteHeaderNeeded =
-  !pathname.match(/^\/signup/) &&
-  !pathname.match(/^\/course\/[0-9a-f-]+(\/edit|\/edit\/.*)$/) &&
-  !pathname.match(/^\/courses\/lecture/);
+    !pathname.match(/^\/signup/) &&
+    !pathname.match(/^\/course\/[0-9a-f-]+(\/edit|\/edit\/.*)$/) &&
+    !pathname.match(/^\/courses\/lecture/);
   const isCategoryNeeded = pathname == "/" 
                         || pathname.includes("/courses")
                         || pathname.includes("/search");
+  const isSearchNeeded = 
+    !pathname.match(/^\/course\/[0-9a-f-]/) &&
+    !pathname.match(/^\/course\/[0-9a-f-]+(\/edit|\/edit\/.*)$/) &&
+    !pathname.match(/^\/courses\/lecture/);
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
@@ -145,10 +149,10 @@ export default function SiteHeader({
   return (
   <>
     <header className="relative site-header w-full bg-white">
-
-      {/* 1단: 로고 등 상단바 */}
       <div className="header-top flex items-center justify-between px-8 py-2 gap-4">
-        <div className="logo min-w-[120px]">
+        
+        {/* 1단: 로고 등 상단바 */}
+        <div className="flex-[1] flex logo min-w-[120px]">
           <Link href="/">
             <Image
               // src="/images/inflearn_public_logo.png"
@@ -172,7 +176,7 @@ export default function SiteHeader({
             강의
           </Link>
         </nav> */}
-        <nav className="main-nav flex gap-6 text-base font-bold text-gray-700">
+        <nav className="main-nav flex-[2] flex justify-center items-center gap-6 text-base font-bold text-gray-700">
           {[
             { href: "#", label: "강의", icon: "/images/header/course.png" },
             { href: "#", label: "챌린지", icon: "/images/header/challenge.png" },
@@ -210,7 +214,7 @@ export default function SiteHeader({
           Sentry Test
         </Button> */}
         
-        <div className="flex items-center gap-3">
+        <div className="flex-[1] flex justify-end items-center gap-3">
           <Link href="/instructor">
             <Button
               variant="outline"
@@ -414,103 +418,105 @@ export default function SiteHeader({
       </div> */}
 
       {/* 2단: 검색창 */}
-      <div className="flex justify-center px-4 py-4">
-        <div className={`relative flex w-full max-w-xl items-center bg-white rounded-full shadow-sm min-h-[58px]
-        ${isFocused 
-            ? 'border-2 border-[#1dc078] shadow-lg' 
-            : 'border border-gray-200'
-        }`}
-        >
-          {/* 메뉴 드롭다운 */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <button className="flex items-center px-3 py-2 gap-2 hover:bg-gray-50 rounded-l-full cursor-pointer">
-                <Image
-                  src={menus[0].icon}
-                  width={30}
-                  height={23}
-                  alt={menus[0].label}
-                />
-                <svg
-                  aria-hidden="true"
-                  focusable="false"
-                  data-prefix="fas"
-                  data-icon="caret-down"
-                  className="svg-inline--fa fa-caret-down"
-                  role="img"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 320 512"
-                  width={10}
-                  height={12}
-                  style={{ 
-                    // fontSize: "12px", 
-                    color: "rgb(33, 37, 41)" }}
-                >
-                  <path
-                    fill="currentColor"
-                    d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"
-                  />
-                </svg>
-                {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.08 1.04l-4.24 4.25a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                </svg> */}
-              </button>
-            </PopoverTrigger>
-
-            {/* 드롭다운 메뉴 목록 */}
-            <PopoverContent align="start" className="w-36 p-1 rounded-md shadow-md">
-              <div className="flex flex-col">
-                {menus.map((menu) => (
-                  <button
-                    key={menu.label}
-                    className="flex items-center px-3 py-2 hover:bg-gray-100 gap-2 text-sm text-gray-700 rounded-md"
-                    onClick={() => {
-                      // 선택 기능 넣을 수 있음
-                    }}
-                  >
-                    <Image src={menu.icon} width={18} height={18} alt={menu.label} />
-                    <span>{menu.label}</span>
-                  </button>
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
-
-          {/* 입력창 */}
-          {!search && !isFocused && (
-            <div className="absolute left-12 ml-8 top-1/2 -translate-y-1/2 w-[calc(100%-100px)] pointer-events-none">
-              <RollingPlaceholder />
-            </div>
-          )}
-          <input
-            type="text"
-            className="flex-1 text-sm px-4 py-3 bg-transparent placeholder:text-gray-400 focus:outline-none"
-            // placeholder={placeholderList[placeholderIndex]}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && search.trim()) {
-                router.push(`/search?q=${search}`);
-              }
-            }}
-          />          
-
-          {/* 검색 버튼 */}
-          <button
-            type="button"
-            className="bg-[#1dc078] hover:bg-[#1dc078]/90 text-white rounded-full w-10 h-10 flex items-center justify-center mr-2"
-            onClick={() => {
-              if (search.trim()) {
-                router.push(`/search?q=${search}`);
-              }
-            }}
+      {isSearchNeeded && (
+        <div className="flex justify-center px-4 py-4">
+          <div className={`relative flex w-full max-w-lg items-center bg-white rounded-full shadow-sm min-h-[58px]
+          ${isFocused 
+              ? 'border-2 border-[#1dc078] shadow-lg' 
+              : 'border border-gray-200'
+          }`}
           >
-            <Search size={20} />
-          </button>
+            {/* 메뉴 드롭다운 */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center px-3 py-2 gap-2 hover:bg-gray-50 rounded-l-full cursor-pointer">
+                  <Image
+                    src={menus[0].icon}
+                    width={30}
+                    height={23}
+                    alt={menus[0].label}
+                  />
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    data-prefix="fas"
+                    data-icon="caret-down"
+                    className="svg-inline--fa fa-caret-down"
+                    role="img"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 320 512"
+                    width={10}
+                    height={12}
+                    style={{ 
+                      // fontSize: "12px", 
+                      color: "rgb(33, 37, 41)" }}
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"
+                    />
+                  </svg>
+                  {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.08 1.04l-4.24 4.25a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                  </svg> */}
+                </button>
+              </PopoverTrigger>
+
+              {/* 드롭다운 메뉴 목록 */}
+              <PopoverContent align="start" className="w-36 p-1 rounded-md shadow-md">
+                <div className="flex flex-col">
+                  {menus.map((menu) => (
+                    <button
+                      key={menu.label}
+                      className="flex items-center px-3 py-2 hover:bg-gray-100 gap-2 text-sm text-gray-700 rounded-md"
+                      onClick={() => {
+                        // 선택 기능 넣을 수 있음
+                      }}
+                    >
+                      <Image src={menu.icon} width={18} height={18} alt={menu.label} />
+                      <span>{menu.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* 입력창 */}
+            {!search && !isFocused && (
+              <div className="absolute left-12 ml-8 top-1/2 -translate-y-1/2 w-[calc(100%-100px)] pointer-events-none">
+                <RollingPlaceholder />
+              </div>
+            )}
+            <input
+              type="text"
+              className="flex-1 text-sm px-4 py-3 bg-transparent placeholder:text-gray-400 focus:outline-none"
+              // placeholder={placeholderList[placeholderIndex]}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && search.trim()) {
+                  router.push(`/search?q=${search}`);
+                }
+              }}
+            />          
+
+            {/* 검색 버튼 */}
+            <button
+              type="button"
+              className="bg-[#1dc078] hover:bg-[#1dc078]/90 text-white rounded-full w-10 h-10 flex items-center justify-center mr-2"
+              onClick={() => {
+                if (search.trim()) {
+                  router.push(`/search?q=${search}`);
+                }
+              }}
+            >
+              <Search size={20} />
+            </button>
+          </div>
         </div>
-      </div>  
+      )}  
 
       {/* 3단: 카테고리 */}
       <div className="header-bottom bg-white px-8">
