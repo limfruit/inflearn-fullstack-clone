@@ -1,7 +1,7 @@
 "use client";
 
 import { CourseCategory, User } from "@/generated/openapi-client";
-import { Search, ShoppingCart } from "lucide-react";
+import { Globe, Grid3X3, Search, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -217,18 +217,48 @@ export default function SiteHeader({
         <div className="flex-[1] flex justify-end items-center gap-3">
           <Link href="/instructor">
             <Button
-              variant="outline"
-              className="font-semibold border-gray-200 hover:border-[#1dc078] hover:text-[#1dc078]"
+              className="text-base font-bold text-gray-700 bg-white rounded-md hover:bg-gray-50"
             >
-              지식공유자
+              지식공유
             </Button>
           </Link>
+
+          <button className="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-[#1dc078] transition-colors rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer">
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              viewBox="0 0 448 512" 
+              className="w-4 h-4"
+              fill="currentColor"
+            >
+              <path d="M0 72C0 49.9 17.9 32 40 32H88c22.1 0 40 17.9 40 40v48c0 22.1-17.9 40-40 40H40c-22.1 0-40-17.9-40-40V72zM0 232c0-22.1 17.9-40 40-40H88c22.1 0 40 17.9 40 40v48c0 22.1-17.9 40-40 40H40c-22.1 0-40-17.9-40-40V232zM128 392v48c0 22.1-17.9 40-40 40H40c-22.1 0-40-17.9-40-40V392c0-22.1 17.9-40 40-40H88c22.1 0 40 17.9 40 40zM160 72c0-22.1 17.9-40 40-40h48c22.1 0 40 17.9 40 40v48c0 22.1-17.9 40-40 40H200c-22.1 0-40-17.9-40-40V72zM288 232v48c0 22.1-17.9 40-40 40H200c-22.1 0-40-17.9-40-40V232c0-22.1 17.9-40 40-40h48c22.1 0 40 17.9 40 40zM160 392c0-22.1 17.9-40 40-40h48c22.1 0 40 17.9 40 40v48c0 22.1-17.9 40-40 40H200c-22.1 0-40-17.9-40-40V392zM448 72v48c0 22.1-17.9 40-40 40H360c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h48c22.1 0 40 17.9 40 40zM320 232c0-22.1 17.9-40 40-40h48c22.1 0 40 17.9 40 40v48c0 22.1-17.9 40-40 40H360c-22.1 0-40-17.9-40-40V232zM448 392v48c0 22.1-17.9 40-40 40H360c-22.1 0-40-17.9-40-40V392c0-22.1 17.9-40 40-40h48c22.1 0 40 17.9 40 40z" />
+            </svg>
+          </button>
+
+          <button className="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-[#1dc078] transition-colors rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer">
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              viewBox="0 0 512 512" 
+              className="w-4 h-4"
+              fill="currentColor"
+            >
+              <path d="M256 464c7.4 0 27-7.2 47.6-48.4c8.8-17.7 16.4-39.2 22-63.6H186.4c5.6 24.4 13.2 45.9 22 63.6C229 456.8 248.6 464 256 464zM178.5 304h155c1.6-15.3 2.5-31.4 2.5-48s-.9-32.7-2.5-48h-155c-1.6 15.3-2.5 31.4-2.5 48s.9 32.7 2.5 48zm7.9-144H325.6c-5.6-24.4-13.2-45.9-22-63.6C283 55.2 263.4 48 256 48s-27 7.2-47.6 48.4c-8.8 17.7-16.4 39.2-22 63.6zm195.3 48c1.5 15.5 2.2 31.6 2.2 48s-.8 32.5-2.2 48h76.7c3.6-15.4 5.6-31.5 5.6-48s-1.9-32.6-5.6-48H381.8zm58.8-48c-21.4-41.1-56.1-74.1-98.4-93.4c14.1 25.6 25.3 57.5 32.6 93.4h65.9zm-303.3 0c7.3-35.9 18.5-67.7 32.6-93.4c-42.3 19.3-77 52.3-98.4 93.4h65.9zM53.6 208c-3.6 15.4-5.6 31.5-5.6 48s1.9 32.6 5.6 48h76.7c-1.5-15.5-2.2-31.6-2.2-48s.8-32.5 2.2-48H53.6zM342.1 445.4c42.3-19.3 77-52.3 98.4-93.4H374.7c-7.3 35.9-18.5 67.7-32.6 93.4zm-172.2 0c-14.1-25.6-25.3-57.5-32.6-93.4H71.4c21.4 41.1 56.1 74.1 98.4 93.4zM256 512A256 256 0 1 1 256 0a256 256 0 1 1 0 512z" />
+            </svg>
+          </button>
           
-          {/* 장바구니 아이콘 + Popover */}
+          {session && (
           <Popover open={cartOpen} onOpenChange={setCartOpen}>
             <PopoverTrigger asChild>
-              <button className="relative p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer">
-                <ShoppingCart className="size-6 text-gray-600" />
+              <button className="relative w-10 h-10 flex items-center justify-center text-gray-900 hover:text-[#1dc078] transition-colors rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer">
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    viewBox="0 0 576 512" 
+                    className="w-4 h-4"
+                    fill="currentColor"
+                  >
+                    <path d="M24 0C10.7 0 0 10.7 0 24S10.7 48 24 48H69.5c3.8 0 7.1 2.7 7.9 6.5l51.6 271c6.5 34 36.2 58.5 70.7 58.5H488c13.3 0 24-10.7 24-24s-10.7-24-24-24H199.7c-11.5 0-21.4-8.2-23.6-19.5L170.7 288H459.2c32.6 0 61.1-21.8 69.5-53.3l41-152.3C576.6 57 557.4 32 531.1 32h-411C111 12.8 91.6 0 69.5 0H24zM131.1 80H520.7L482.4 222.2c-2.8 10.5-12.3 17.8-23.2 17.8H161.6L131.1 80zM176 512a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm336-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0z" />
+                  </svg>
+              {/* <button className="relative p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"> */}
+                {/* <ShoppingCart className="size-6 text-gray-600" /> */}
                 {/* 장바구니 totalCount가 1 이상일 때만 */}
                 {((cartItemsQuery?.data?.data?.totalCount ?? 0) > 0) && (
                   <Badge
@@ -311,12 +341,14 @@ export default function SiteHeader({
               )}
             </PopoverContent>
           </Popover>
+          )}
 
           {/* Avatar + Popover or 로그인 버튼 */}
           {session ? (
             <Popover>
               <PopoverTrigger asChild>
-                <div className="cursor-pointer">
+              <button className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 transition-all cursor-pointer">
+                {/* <div className="cursor-pointer"> */}
                   <Avatar>
                     {profile?.image ? (
                       <img
@@ -332,7 +364,8 @@ export default function SiteHeader({
                       </AvatarFallback>
                     )}
                   </Avatar>
-                </div>
+                {/* </div> */}
+                </button>
               </PopoverTrigger>
               <PopoverContent align="end" className="w-56 p-0">
                 <div className="px-4 py-3 border-b border-gray-100">
@@ -377,7 +410,8 @@ export default function SiteHeader({
             <Button
               variant="outline"
               onClick={() => setIsLoginModalOpen(true)}
-              className="font-semibold border-gray-200 hover:border-[#1dc078] hover:text-[#1dc078] ml-2"
+              // className="font-semibold border-gray-200 hover:border-[#1dc078] hover:text-[#1dc078] ml-2"
+              className="px-5 py-3 text-sm font-semibold text-gray-700 transition-colors rounded-full bg-gray-100 hover:bg-gray-200 border-0 outline-none focus:outline-none"
             >
               로그인
             </Button>
@@ -419,7 +453,7 @@ export default function SiteHeader({
 
       {/* 2단: 검색창 */}
       {isSearchNeeded && (
-        <div className="flex justify-center px-4 py-4">
+        <div className="flex justify-center px-4 py-3">
           <div className={`relative flex w-full max-w-lg items-center bg-white rounded-full shadow-sm min-h-[58px]
           ${isFocused 
               ? 'border-2 border-[#1dc078] shadow-lg' 

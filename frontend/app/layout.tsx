@@ -6,6 +6,7 @@ import * as api from "@/lib/api";
 import SiteHeader from "@/components/site-header";
 import { Toaster } from "sonner";
 import { auth } from "@/auth";
+import SiteFooter from "@/components/site-footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,6 +47,7 @@ export default async function RootLayout({
             categories={categories.data ?? []}
           />
           <main>{children}</main>
+          <SiteFooter />
         </Providers>
         <Toaster />
       </body>
