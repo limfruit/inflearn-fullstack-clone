@@ -20,7 +20,7 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_PRIVATE_KEY }}
         port: ${{ secrets.EC2_PORT || 22 }}
-        command_timeout: 30m
+        command_timeout: 60m
         script: |
           cd /home/${{ secrets.EC2_USERNAME }}/inflearn-fullstack-clone
 
