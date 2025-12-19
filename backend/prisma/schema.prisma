@@ -14,6 +14,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum CourseType {
+  ONLINE
+  CHALLENGE
+}
+
+enum UnitType {
+  LECTURE
+  MISSION
+  QUIZ
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String  @map("user_id")
@@ -66,6 +77,11 @@ model User {
   cartItems         CartItem[]
   orders            Order[]
 
+  unitActivities         UnitActivity[]
+  unitSubmissions        UnitSubmission[]
+  unitSubmissionComments UnitSubmissionComment[]
+
+
   @@map("users")
 }
 
@@ -105,6 +121,10 @@ model Course {
   cartItems         CartItem[]
   orderItems        OrderItem[]
 
+  usesUnits         Boolean @default(false) @map("uses_units")
+  units             Unit[]
+  unitActivities     UnitActivity[]
+
   @@map("courses")
 }
 
@@ -119,6 +139,8 @@ model Section {
 
   course   Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
   lectures Lecture[]
+
+  units    Unit[]
 
   @@map("sections")
 }
@@ -344,4 +366,101 @@ model DailyPaymentStats {
   updatedAt     DateTime @updatedAt @map("updated_at")
 
   @@map("daily_payment_stats")
+}
+
+
+
+
+// 강의/챌린지 모두 가능하도록 변경
+
+model Unit {
+  id               String   @id @default(uuid())
+  type             UnitType @default(LECTURE)
+  title            String
+  description      String?
+  order            Int
+  sectionId        String   @map("section_id")
+  courseId         String   @map("course_id")
+
+  // LECTURE
+  duration         Int?
+  isPreview        Boolean  @default(false) @map("is_preview")
+  videoStorageInfo Json?    @map("video_storage_info")
+
+  // MISSION
+  content          String?  @db.Text
+
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  section      Section           @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  course       Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  activities   UnitActivity[]
+  submissions  UnitSubmission[]
+
+  @@index([courseId]) 
+  @@index([sectionId])
+  @@map("units")
+}
+
+model UnitActivity {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  courseId      String   @map("course_id")
+  unitId        String   @map("unit_id")
+  progress      Int      @default(0) // 몇 퍼센트 진행됐는지에 대한 정보 (실제로 어디까지 봤는지는 알 수 없음)
+  duration      Int      @default(0) // 몇 초 봤는지에 대한 정보 (seconds)
+  isCompleted   Boolean  @default(false) @map("is_completed")
+  lastVisitedAt DateTime @default(now()) @map("last_visited_at")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course  Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  unit    Unit    @relation(fields: [unitId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([unitId])
+  @@index([userId])
+
+  @@unique([userId, courseId, unitId])
+  @@map("unit_activities")
+}
+
+model UnitSubmission {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  unitId        String   @map("unit_id")
+  courseId      String   @map("course_id")
+
+  title         String
+  content       String   @db.Text
+  attachment    Json?
+  // visibility    String   @default("ALL") // ALL, INSTRUCTOR
+
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  unit          Unit    @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  comments      UnitSubmissionComment[]
+
+  @@index([courseId])
+  @@index([unitId])
+  
+  @@unique([userId, unitId])
+  @@map("unit_submissions")
+}
+
+model UnitSubmissionComment {
+  id            String   @id @default(uuid())
+  content       String
+  userId        String   @map("user_id")
+  submissionId  String   @map("submission_id")
+
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  submission  UnitSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@map("unit_submission_comments")
 }
