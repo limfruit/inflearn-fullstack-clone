@@ -81,7 +81,6 @@ model User {
   unitSubmissions        UnitSubmission[]
   unitSubmissionComments UnitSubmissionComment[]
 
-
   @@map("users")
 }
 
@@ -121,9 +120,10 @@ model Course {
   cartItems         CartItem[]
   orderItems        OrderItem[]
 
+  type              CourseType @default(ONLINE) 
   usesUnits         Boolean @default(false) @map("uses_units")
   units             Unit[]
-  unitActivities     UnitActivity[]
+  unitActivities    UnitActivity[]
 
   @@map("courses")
 }
