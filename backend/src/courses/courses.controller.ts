@@ -14,7 +14,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CoursesService } from './courses.service';
-import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
 import { Request } from 'express';
 import { CreateCourseDto } from './dto/create-course.dto';

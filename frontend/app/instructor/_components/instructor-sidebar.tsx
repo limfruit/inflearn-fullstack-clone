@@ -56,7 +56,8 @@ export default function InstructorSidebar() {
   };
 
   return (
-    <aside className="w-full max-w-[260px] flex flex-col gap-2 p-4 border-r bg-white min-h-screen">
+    // <aside className="w-full max-w-[260px] flex flex-col gap-2 p-4 border-r bg-white min-h-screen">
+    <aside className="w-[200px] flex-shrink-0 flex flex-col gap-2 p-4 border-r bg-white min-h-screen">
       {sidebarItems.map((item) => {
         const isActive = pathname === item.href;
         const isPreparing = item.href.endsWith("#");

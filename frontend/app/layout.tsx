@@ -41,13 +41,25 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased max-w-7xl mx-auto`}
       >
         <Providers>
-          <SiteHeader
+          {/* <SiteHeader
             session={session}
             profile={profile.data}
             categories={categories.data ?? []}
           />
           <main>{children}</main>
-          <SiteFooter />
+          <SiteFooter /> */}
+
+          <div className="flex flex-col min-h-screen">
+            <SiteHeader
+              session={session}
+              profile={profile.data}
+              categories={categories.data ?? []}
+            />
+            <main className="flex-1 max-w-7xl w-full mx-auto">
+              {children}
+            </main>
+            <SiteFooter />
+          </div>
         </Providers>
         <Toaster />
       </body>

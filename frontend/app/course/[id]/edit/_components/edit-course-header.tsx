@@ -29,9 +29,40 @@ export default function EditCourseHeader({ course }: { course: Course }) {
     },
   });
 
+  const courseTypeConfig = {
+    ONLINE: {
+      label: "일반 강의",
+      icon: "📚",
+      bgColor: "bg-blue-50",
+      textColor: "text-blue-700",
+      borderColor: "border-blue-200"
+    },
+    CHALLENGE: {
+      label: "챌린지",
+      icon: "🏆",
+      bgColor: "bg-amber-50",
+      textColor: "text-amber-700",
+      borderColor: "border-amber-200"
+    }
+  };
+
+  const typeInfo = courseTypeConfig[course.type as keyof typeof courseTypeConfig] || courseTypeConfig.ONLINE;
+
   return (
     <header className="flex justify-between items-center px-6 py-4 bg-white">
-      <h2 className="text-2xl font-bold">{course.title}</h2>
+      <div className="flex items-center gap-3 justify-between">
+        <div
+          className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-sm
+          ${typeInfo.bgColor} ${typeInfo.borderColor} ${typeInfo.textColor}`}
+        >
+          <span>{typeInfo.icon}</span>
+          <span className="font-medium">{typeInfo.label}</span>
+        </div>
+        <h2 className="text-2xl font-bold tracking-tight text-gray-800">
+          {course.title}
+        </h2>
+      </div>
+      
       <div className="flex items-center gap-2">
         <Button
           disabled={

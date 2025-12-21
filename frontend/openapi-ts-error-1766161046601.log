@@ -1,0 +1,11 @@
+[2025-12-19T16:17:26.602Z] Error: Request failed with status 200: 
+Stack:
+Error: Request failed with status 200: 
+    at s (file:///C:/Dev/challenge/inflearn-fullstack-clone/frontend/node_modules/.pnpm/@hey-api+openapi-ts@0.87.5_typescript@5.9.3/node_modules/@hey-api/openapi-ts/dist/src-D4L_i8zt.js:1:12641)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Promise.all (index 0)
+    at async G (file:///C:/Dev/challenge/inflearn-fullstack-clone/frontend/node_modules/.pnpm/@hey-api+openapi-ts@0.87.5_typescript@5.9.3/node_modules/@hey-api/openapi-ts/dist/src-D4L_i8zt.js:1:12748)
+    at async file:///C:/Dev/challenge/inflearn-fullstack-clone/frontend/node_modules/.pnpm/@hey-api+openapi-ts@0.87.5_typescript@5.9.3/node_modules/@hey-api/openapi-ts/dist/src-D4L_i8zt.js:10:2578
+    at async Promise.all (index 0)
+    at async te (file:///C:/Dev/challenge/inflearn-fullstack-clone/frontend/node_modules/.pnpm/@hey-api+openapi-ts@0.87.5_typescript@5.9.3/node_modules/@hey-api/openapi-ts/dist/src-D4L_i8zt.js:10:2525)
+    at async file:///C:/Dev/challenge/inflearn-fullstack-clone/frontend/node_modules/.pnpm/@hey-api+openapi-ts@0.87.5_typescript@5.9.3/node_modules/@hey-api/openapi-ts/dist/run.js:2:1654

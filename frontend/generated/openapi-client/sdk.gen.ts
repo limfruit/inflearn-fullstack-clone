@@ -2,7 +2,7 @@
 
 import { type Client, formDataBodySerializer, type Options as Options2, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { AppControllerGetHelloData, AppControllerGetHelloResponses, AppControllerTestUserData, AppControllerTestUserResponses, CartsControllerAddToCartData, CartsControllerAddToCartResponses, CartsControllerClearCartData, CartsControllerClearCartResponses, CartsControllerGetCartItemsData, CartsControllerGetCartItemsResponses, CartsControllerRemoveFromCartData, CartsControllerRemoveFromCartResponses, CategoriesControllerFindAllData, CategoriesControllerFindAllResponses, CommentsControllerCreateData, CommentsControllerCreateResponses, CommentsControllerRemoveData, CommentsControllerRemoveResponses, CommentsControllerUpdateData, CommentsControllerUpdateResponses, CoursesControllerAddFavoriteData, CoursesControllerAddFavoriteResponses, CoursesControllerCreateData, CoursesControllerCreateInstructorReplyData, CoursesControllerCreateInstructorReplyResponses, CoursesControllerCreateResponses, CoursesControllerCreateReviewData, CoursesControllerCreateReviewResponses, CoursesControllerDeleteData, CoursesControllerDeleteResponses, CoursesControllerDeleteReviewData, CoursesControllerDeleteReviewResponses, CoursesControllerEnrollCourseData, CoursesControllerEnrollCourseResponses, CoursesControllerFindAllInstructorCoursesData, CoursesControllerFindAllInstructorCoursesResponses, CoursesControllerFindAllMyCoursesData, CoursesControllerFindAllMyCoursesResponses, CoursesControllerFindOneData, CoursesControllerFindOneResponses, CoursesControllerGetCourseReviewsData, CoursesControllerGetCourseReviewsResponses, CoursesControllerGetFavoriteData, CoursesControllerGetFavoriteResponses, CoursesControllerGetInstructorReviewsData, CoursesControllerGetInstructorReviewsResponses, CoursesControllerGetLectureActivityData, CoursesControllerGetLectureActivityResponses, CoursesControllerGetMyFavoritesData, CoursesControllerGetMyFavoritesResponses, CoursesControllerRemoveFavoriteData, CoursesControllerRemoveFavoriteResponses, CoursesControllerSearchData, CoursesControllerSearchResponses, CoursesControllerUpdateData, CoursesControllerUpdateResponses, CoursesControllerUpdateReviewData, CoursesControllerUpdateReviewResponses, LecturesControllerCreateData, LecturesControllerCreateResponses, LecturesControllerDeleteData, LecturesControllerDeleteResponses, LecturesControllerFindOneData, LecturesControllerFindOneResponses, LecturesControllerGetLectureActivityData, LecturesControllerGetLectureActivityResponses, LecturesControllerUpdateData, LecturesControllerUpdateLectureActivityData, LecturesControllerUpdateLectureActivityResponses, LecturesControllerUpdateResponses, MediaControllerUploadMediaData, MediaControllerUploadMediaResponses, PaymentsControllerHandleWebookData, PaymentsControllerHandleWebookResponses, PaymentsControllerVerifyPaymentData, PaymentsControllerVerifyPaymentResponses, QuestionsControllerCreateData, QuestionsControllerCreateResponses, QuestionsControllerFindAllByInstructorIdData, QuestionsControllerFindAllByInstructorIdResponses, QuestionsControllerFindAllData, QuestionsControllerFindAllResponses, QuestionsControllerFindOneData, QuestionsControllerFindOneResponses, QuestionsControllerRemoveData, QuestionsControllerRemoveResponses, QuestionsControllerUpdateData, QuestionsControllerUpdateResponses, SectionsControllerCreateData, SectionsControllerCreateResponses, SectionsControllerDeleteData, SectionsControllerDeleteResponses, SectionsControllerFindOneData, SectionsControllerFindOneResponses, SectionsControllerUpdateData, SectionsControllerUpdateResponses, UsersControllerGetProfileData, UsersControllerGetProfileResponses, UsersControllerUpdateProfileData, UsersControllerUpdateProfileResponses } from './types.gen';
+import type { AppControllerDebugSentryData, AppControllerDebugSentryResponses, AppControllerGetHelloData, AppControllerGetHelloResponses, AppControllerTestUserData, AppControllerTestUserResponses, BatchControllerRunPaymentStatsData, BatchControllerRunPaymentStatsResponses, CartsControllerAddToCartData, CartsControllerAddToCartResponses, CartsControllerClearCartData, CartsControllerClearCartResponses, CartsControllerGetCartItemsData, CartsControllerGetCartItemsResponses, CartsControllerRemoveFromCartData, CartsControllerRemoveFromCartResponses, CategoriesControllerFindAllData, CategoriesControllerFindAllResponses, CommentsControllerCreateData, CommentsControllerCreateResponses, CommentsControllerRemoveData, CommentsControllerRemoveResponses, CommentsControllerUpdateData, CommentsControllerUpdateResponses, CoursesControllerAddFavoriteData, CoursesControllerAddFavoriteResponses, CoursesControllerCreateData, CoursesControllerCreateInstructorReplyData, CoursesControllerCreateInstructorReplyResponses, CoursesControllerCreateResponses, CoursesControllerCreateReviewData, CoursesControllerCreateReviewResponses, CoursesControllerDeleteData, CoursesControllerDeleteResponses, CoursesControllerDeleteReviewData, CoursesControllerDeleteReviewResponses, CoursesControllerEnrollCourseData, CoursesControllerEnrollCourseResponses, CoursesControllerFindAllInstructorCoursesData, CoursesControllerFindAllInstructorCoursesResponses, CoursesControllerFindAllMyCoursesData, CoursesControllerFindAllMyCoursesResponses, CoursesControllerFindOneData, CoursesControllerFindOneResponses, CoursesControllerGetCourseReviewsData, CoursesControllerGetCourseReviewsResponses, CoursesControllerGetFavoriteData, CoursesControllerGetFavoriteResponses, CoursesControllerGetInstructorReviewsData, CoursesControllerGetInstructorReviewsResponses, CoursesControllerGetLectureActivityData, CoursesControllerGetLectureActivityResponses, CoursesControllerGetMyFavoritesData, CoursesControllerGetMyFavoritesResponses, CoursesControllerRemoveFavoriteData, CoursesControllerRemoveFavoriteResponses, CoursesControllerSearchData, CoursesControllerSearchResponses, CoursesControllerUpdateData, CoursesControllerUpdateResponses, CoursesControllerUpdateReviewData, CoursesControllerUpdateReviewResponses, LecturesControllerCreateData, LecturesControllerCreateResponses, LecturesControllerDeleteData, LecturesControllerDeleteResponses, LecturesControllerFindOneData, LecturesControllerFindOneResponses, LecturesControllerGetLectureActivityData, LecturesControllerGetLectureActivityResponses, LecturesControllerUpdateData, LecturesControllerUpdateLectureActivityData, LecturesControllerUpdateLectureActivityResponses, LecturesControllerUpdateResponses, MediaControllerUploadMediaData, MediaControllerUploadMediaResponses, PaymentsControllerHandleWebookData, PaymentsControllerHandleWebookResponses, PaymentsControllerVerifyPaymentData, PaymentsControllerVerifyPaymentResponses, QuestionsControllerCreateData, QuestionsControllerCreateResponses, QuestionsControllerFindAllByInstructorIdData, QuestionsControllerFindAllByInstructorIdResponses, QuestionsControllerFindAllData, QuestionsControllerFindAllResponses, QuestionsControllerFindOneData, QuestionsControllerFindOneResponses, QuestionsControllerRemoveData, QuestionsControllerRemoveResponses, QuestionsControllerUpdateData, QuestionsControllerUpdateResponses, SectionsControllerCreateData, SectionsControllerCreateResponses, SectionsControllerDeleteData, SectionsControllerDeleteResponses, SectionsControllerFindOneData, SectionsControllerFindOneResponses, SectionsControllerUpdateData, SectionsControllerUpdateResponses, UnitCoursesControllerCreateData, UnitCoursesControllerCreateResponses, UnitCoursesControllerFindOneData, UnitCoursesControllerFindOneResponses, UnitsControllerCreateData, UnitsControllerCreateResponses, UnitsControllerDeleteData, UnitsControllerDeleteResponses, UnitsControllerFindOneData, UnitsControllerFindOneResponses, UnitsControllerGetUnitActivityData, UnitsControllerGetUnitActivityResponses, UnitsControllerUpdateData, UnitsControllerUpdateResponses, UnitsControllerUpdateUnitActivityData, UnitsControllerUpdateUnitActivityResponses, UsersControllerGetProfileData, UsersControllerGetProfileResponses, UsersControllerUpdateProfileData, UsersControllerUpdateProfileResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -34,6 +34,13 @@ export const appControllerTestUser = <ThrowOnError extends boolean = false>(opti
             }
         ],
         url: '/user-test',
+        ...options
+    });
+};
+
+export const appControllerDebugSentry = <ThrowOnError extends boolean = false>(options?: Options<AppControllerDebugSentryData, ThrowOnError>) => {
+    return (options?.client ?? client).get<AppControllerDebugSentryResponses, unknown, ThrowOnError>({
+        url: '/sentry-test',
         ...options
     });
 };
@@ -737,5 +744,144 @@ export const paymentsControllerHandleWebook = <ThrowOnError extends boolean = fa
             'Content-Type': 'application/json',
             ...options.headers
         }
+    });
+};
+
+export const batchControllerRunPaymentStats = <ThrowOnError extends boolean = false>(options: Options<BatchControllerRunPaymentStatsData, ThrowOnError>) => {
+    return (options.client ?? client).post<BatchControllerRunPaymentStatsResponses, unknown, ThrowOnError>({
+        url: '/admin/batch/payment-stats',
+        ...options
+    });
+};
+
+/**
+ * 새 유닛 생성
+ */
+export const unitsControllerCreate = <ThrowOnError extends boolean = false>(options: Options<UnitsControllerCreateData, ThrowOnError>) => {
+    return (options.client ?? client).post<UnitsControllerCreateResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/units/sections/{sectionId}/units',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+/**
+ * 개별 유닛 삭제
+ */
+export const unitsControllerDelete = <ThrowOnError extends boolean = false>(options: Options<UnitsControllerDeleteData, ThrowOnError>) => {
+    return (options.client ?? client).delete<UnitsControllerDeleteResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/units/{unitId}',
+        ...options
+    });
+};
+
+/**
+ * 개별 유닛 상세 정보
+ */
+export const unitsControllerFindOne = <ThrowOnError extends boolean = false>(options: Options<UnitsControllerFindOneData, ThrowOnError>) => {
+    return (options.client ?? client).get<UnitsControllerFindOneResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/units/{unitId}',
+        ...options
+    });
+};
+
+/**
+ * 개별 유닛 수정
+ */
+export const unitsControllerUpdate = <ThrowOnError extends boolean = false>(options: Options<UnitsControllerUpdateData, ThrowOnError>) => {
+    return (options.client ?? client).patch<UnitsControllerUpdateResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/units/{unitId}',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const unitsControllerGetUnitActivity = <ThrowOnError extends boolean = false>(options: Options<UnitsControllerGetUnitActivityData, ThrowOnError>) => {
+    return (options.client ?? client).get<UnitsControllerGetUnitActivityResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/units/{unitId}/activity',
+        ...options
+    });
+};
+
+export const unitsControllerUpdateUnitActivity = <ThrowOnError extends boolean = false>(options: Options<UnitsControllerUpdateUnitActivityData, ThrowOnError>) => {
+    return (options.client ?? client).put<UnitsControllerUpdateUnitActivityResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/units/{unitId}/activity',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const unitCoursesControllerCreate = <ThrowOnError extends boolean = false>(options: Options<UnitCoursesControllerCreateData, ThrowOnError>) => {
+    return (options.client ?? client).post<UnitCoursesControllerCreateResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/unit-courses',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const unitCoursesControllerFindOne = <ThrowOnError extends boolean = false>(options: Options<UnitCoursesControllerFindOneData, ThrowOnError>) => {
+    return (options.client ?? client).get<UnitCoursesControllerFindOneResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/unit-courses/{id}',
+        ...options
     });
 };

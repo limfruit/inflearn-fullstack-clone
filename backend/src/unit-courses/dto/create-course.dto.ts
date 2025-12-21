@@ -1,17 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CourseType } from '@prisma/client';
 import {
-  IsArray,
-  IsBoolean,
   IsEnum,
-  IsNumber,
-  IsOptional,
   IsString,
-  IsUUID,
 } from 'class-validator';
 
 export class CreateCourseDto {
-  @ApiProperty({ description: '코스 제목' }) // 실제 swagger 문서에 해당 설명이 따라붙음
+  @ApiProperty({ description: '코스 제목' })
   @IsString()
   title: string;
+
+  @ApiProperty({ description: '코스 타입' })
+  @IsEnum(CourseType)
+  type: CourseType; // ONLINE | CHALLENGE
 }

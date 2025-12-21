@@ -9,6 +9,6 @@ export const metadata: Metadata = {
 
 export default async function InstructorCoursesPage() {
   const { data: courses } = await api.getAllInstructorCourses();
-
+  console.log(courses)
   return <UI courses={courses ?? []} />;
 }

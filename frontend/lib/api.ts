@@ -13,6 +13,7 @@ import {
   coursesControllerCreate,
   coursesControllerCreateInstructorReply,
   coursesControllerCreateReview,
+  coursesControllerDelete,
   coursesControllerDeleteReview,
   coursesControllerEnrollCourse,
   coursesControllerFindAllInstructorCourses,
@@ -27,6 +28,7 @@ import {
   coursesControllerSearch,
   coursesControllerUpdate,
   coursesControllerUpdateReview,
+  CourseType,
   CreateCommentDto,
   CreateQuestionDto,
   CreateReviewDto,
@@ -47,12 +49,21 @@ import {
   sectionsControllerCreate,
   sectionsControllerDelete,
   sectionsControllerUpdate,
+  unitCoursesControllerCreate,
+  unitCoursesControllerFindOne,
+  unitsControllerCreate,
+  unitsControllerDelete,
+  unitsControllerUpdate,
+  unitsControllerUpdateUnitActivity,
+  UnitType,
   UpdateCommentDto,
   UpdateCourseDto,
   UpdateLectureActivityDto,
   UpdateLectureDto,
   UpdateQuestionDto,
   UpdateReviewDto,
+  UpdateUnitActivityDto,
+  UpdateUnitDto,
   UpdateUserDto,
   usersControllerGetProfile,
   usersControllerUpdateProfile,
@@ -528,6 +539,121 @@ export const clearCart = async () => {
 export const verifyPayment = async (verifyPaymentDto: VerifyPaymentDto) => {
   const { data, error } = await paymentsControllerVerifyPayment({
     body: verifyPaymentDto,
+  });
+
+  return { data, error };
+};
+
+
+
+
+
+// Unit 버전 추가
+
+export const createUnitCourse = async (
+  title: string, 
+  type: CourseType
+) => {
+  const { data, error } = await unitCoursesControllerCreate({
+    body: {
+      title,
+      type,
+    },
+  });
+  
+  return {
+    data,
+    error,
+  };
+};
+
+export const getUnitCourseById = async (id: string) => {
+  const { data, error } = await unitCoursesControllerFindOne({
+    path: {
+      id,
+    },
+  });
+
+  return {
+    data,
+    error,
+  };
+};
+
+export const createUnit = async (
+  sectionId: string, 
+  title: string, 
+  type?: UnitType,
+) => {
+  const { data, error } = await unitsControllerCreate({
+    path: {
+      sectionId,
+    },
+    body: {
+      title,
+      ...(type && { type }),
+    } ,
+  });
+
+  return { data, error };
+};
+
+export const deleteUnit = async (unitId: string) => {
+  const { data, error } = await unitsControllerDelete({
+    path: {
+      unitId,
+    },
+  });
+
+  return { data, error };
+};
+
+export const updateUnitPreview = async (
+  unitId: string,
+  isPreview: boolean
+) => {
+  const { data, error } = await unitsControllerUpdate({
+    path: {
+      unitId,
+    },
+    body: {
+      isPreview,
+    },
+  });
+
+  return { data, error };
+};
+
+export const updateUnit = async (
+  unitId: string,
+  updateUnitDto: UpdateUnitDto
+) => {
+  const { data, error } = await unitsControllerUpdate({
+    path: {
+      unitId,
+    },
+    body: updateUnitDto,
+  });
+
+  return { data, error };
+};
+
+export const updateUnitActivity = async (unitId: string, updateUnitActivityDto: UpdateUnitActivityDto) => {
+  const {data, error} = await unitsControllerUpdateUnitActivity({
+    path: {
+      unitId,
+    },
+    body: updateUnitActivityDto,
+  });
+
+  return {data, error}
+};
+
+export const deleteCourse = async (courseId: string) => {
+  const { data, error } = await coursesControllerDelete({
+    path: {
+      id: courseId,
+    },
   });
 
   return { data, error };

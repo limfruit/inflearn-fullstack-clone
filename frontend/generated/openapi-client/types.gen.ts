@@ -9,6 +9,10 @@ export type CreateCourseDto = {
      * 코스 제목
      */
     title: string;
+    /**
+     * 코스 타입
+     */
+    type: string;
 };
 
 export type Account = {
@@ -159,6 +163,72 @@ export type Order = {
     payments: Array<Payment>;
 };
 
+export type UnitType = 'LECTURE' | 'MISSION' | 'QUIZ';
+
+export type UnitSubmissionComment = {
+    id: string;
+    content: string;
+    userId: string;
+    submissionId: string;
+    createdAt: string;
+    updatedAt: string;
+    user: User;
+    submission: UnitSubmission;
+};
+
+export type UnitSubmission = {
+    id: string;
+    userId: string;
+    unitId: string;
+    courseId: string;
+    title: string;
+    content: string;
+    attachment?: {
+        [key: string]: unknown;
+    };
+    createdAt: string;
+    updatedAt: string;
+    user: User;
+    unit: Unit;
+    comments: Array<UnitSubmissionComment>;
+};
+
+export type Unit = {
+    id: string;
+    type: UnitType;
+    title: string;
+    description?: string;
+    order: number;
+    sectionId: string;
+    courseId: string;
+    duration?: number;
+    isPreview: boolean;
+    videoStorageInfo?: {
+        [key: string]: unknown;
+    };
+    content?: string;
+    createdAt: string;
+    updatedAt: string;
+    section: Section;
+    course: Course;
+    activities: Array<UnitActivity>;
+    submissions: Array<UnitSubmission>;
+};
+
+export type UnitActivity = {
+    id: string;
+    userId: string;
+    courseId: string;
+    unitId: string;
+    progress: number;
+    duration: number;
+    isCompleted: boolean;
+    lastVisitedAt: string;
+    user: User;
+    course: Course;
+    unit: Unit;
+};
+
 export type User = {
     id: string;
     name?: string;
@@ -178,6 +248,9 @@ export type User = {
     courseFavorites: Array<CourseFavorite>;
     cartItems: Array<CartItem>;
     orders: Array<Order>;
+    unitActivities: Array<UnitActivity>;
+    unitSubmissions: Array<UnitSubmission>;
+    unitSubmissionComments: Array<UnitSubmissionComment>;
 };
 
 export type LectureActivity = {
@@ -223,6 +296,8 @@ export type CourseCategory = {
     courses: Array<Course>;
 };
 
+export type CourseType = 'ONLINE' | 'CHALLENGE';
+
 export type Course = {
     id: string;
     slug: string;
@@ -248,6 +323,10 @@ export type Course = {
     lectureActivities: Array<LectureActivity>;
     cartItems: Array<CartItem>;
     orderItems: Array<OrderItem>;
+    type: CourseType;
+    usesUnits: boolean;
+    units: Array<Unit>;
+    unitActivities: Array<UnitActivity>;
 };
 
 export type Section = {
@@ -260,6 +339,7 @@ export type Section = {
     updatedAt: string;
     course: Course;
     lectures: Array<Lecture>;
+    units: Array<Unit>;
 };
 
 export type CourseDetailDto = {
@@ -287,6 +367,10 @@ export type CourseDetailDto = {
     lectureActivities: Array<LectureActivity>;
     cartItems: Array<CartItem>;
     orderItems: Array<OrderItem>;
+    type: CourseType;
+    usesUnits: boolean;
+    units: Array<Unit>;
+    unitActivities: Array<UnitActivity>;
     /**
      * 수강등록 여부
      */
@@ -307,6 +391,10 @@ export type CourseDetailDto = {
      * 총 강의 수
      */
     totalLectures: number;
+    /**
+     * 총 미션 수
+     */
+    totalMissions?: number;
     /**
      * 총 강의 시간(초)
      */
@@ -678,6 +766,73 @@ export type VerifyPaymentDto = {
     [key: string]: unknown;
 };
 
+export type CreateUnitDto = {
+    /**
+     * 개별 유닛 제목
+     */
+    title: string;
+    /**
+     * 개별 유닛 타입
+     */
+    type?: string;
+};
+
+export type UpdateUnitDto = {
+    /**
+     * 개별 유닛 제목
+     */
+    title?: string;
+    /**
+     * 개별 유닛 타입
+     */
+    type?: string;
+    /**
+     * 개별 유닛 설명
+     */
+    description?: string;
+    /**
+     * 개별 유닛 순서
+     */
+    order?: number;
+    /**
+     * 개별 유닛 길이
+     */
+    duration?: number;
+    /**
+     * 개별 유닛 무료(미리보기) 여부
+     */
+    isPreview?: boolean;
+    /**
+     * 개별 유닛 비디오 업로드 정보
+     */
+    videoStorageInfo?: {
+        [key: string]: unknown;
+    };
+    /**
+     * 개별 유닛 내용
+     */
+    content?: string;
+};
+
+export type UpdateUnitActivityDto = {
+    /**
+     * 강의 진행 상황
+     */
+    progress: number;
+    /**
+     * 강의 재생 시간
+     */
+    duration: number;
+    /**
+     * 강의 완료 여부
+     */
+    isCompleted: boolean;
+    /**
+     * 마지막 방문 시간
+     */
+    lastVisitedAt: string;
+};
+
 export type AppControllerGetHelloData = {
     body?: never;
     path?: never;
@@ -697,6 +852,17 @@ export type AppControllerTestUserData = {
 };
 
 export type AppControllerTestUserResponses = {
+    200: unknown;
+};
+
+export type AppControllerDebugSentryData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/sentry-test';
+};
+
+export type AppControllerDebugSentryResponses = {
     200: unknown;
 };
 
@@ -1539,3 +1705,170 @@ export type PaymentsControllerHandleWebookData = {
 export type PaymentsControllerHandleWebookResponses = {
     201: unknown;
 };
+
+export type BatchControllerRunPaymentStatsData = {
+    body?: never;
+    path?: never;
+    query: {
+        date: string;
+    };
+    url: '/admin/batch/payment-stats';
+};
+
+export type BatchControllerRunPaymentStatsResponses = {
+    201: unknown;
+};
+
+export type UnitsControllerCreateData = {
+    body: CreateUnitDto;
+    path: {
+        /**
+         * 섹션 ID
+         */
+        sectionId: string;
+    };
+    query?: never;
+    url: '/units/sections/{sectionId}/units';
+};
+
+export type UnitsControllerCreateResponses = {
+    /**
+     * 유닛 생성 성공
+     */
+    200: Unit;
+};
+
+export type UnitsControllerCreateResponse = UnitsControllerCreateResponses[keyof UnitsControllerCreateResponses];
+
+export type UnitsControllerDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * 개별 유닛 ID
+         */
+        unitId: string;
+    };
+    query?: never;
+    url: '/units/{unitId}';
+};
+
+export type UnitsControllerDeleteResponses = {
+    /**
+     * 개별 유닛 삭제 성공
+     */
+    200: Unit;
+};
+
+export type UnitsControllerDeleteResponse = UnitsControllerDeleteResponses[keyof UnitsControllerDeleteResponses];
+
+export type UnitsControllerFindOneData = {
+    body?: never;
+    path: {
+        /**
+         * 개별 유닛 ID
+         */
+        unitId: string;
+    };
+    query?: never;
+    url: '/units/{unitId}';
+};
+
+export type UnitsControllerFindOneResponses = {
+    /**
+     * 개별 유닛 상세 정보 조회
+     */
+    200: Unit;
+};
+
+export type UnitsControllerFindOneResponse = UnitsControllerFindOneResponses[keyof UnitsControllerFindOneResponses];
+
+export type UnitsControllerUpdateData = {
+    body: UpdateUnitDto;
+    path: {
+        /**
+         * 개별 유닛 ID
+         */
+        unitId: string;
+    };
+    query?: never;
+    url: '/units/{unitId}';
+};
+
+export type UnitsControllerUpdateResponses = {
+    /**
+     * 개별 유닛 수정 성공
+     */
+    200: Unit;
+};
+
+export type UnitsControllerUpdateResponse = UnitsControllerUpdateResponses[keyof UnitsControllerUpdateResponses];
+
+export type UnitsControllerGetUnitActivityData = {
+    body?: never;
+    path: {
+        unitId: string;
+    };
+    query?: never;
+    url: '/units/{unitId}/activity';
+};
+
+export type UnitsControllerGetUnitActivityResponses = {
+    /**
+     * 유닛 강의 활동 이벤트 조회
+     */
+    200: UnitActivity;
+};
+
+export type UnitsControllerGetUnitActivityResponse = UnitsControllerGetUnitActivityResponses[keyof UnitsControllerGetUnitActivityResponses];
+
+export type UnitsControllerUpdateUnitActivityData = {
+    body: UpdateUnitActivityDto;
+    path: {
+        unitId: string;
+    };
+    query?: never;
+    url: '/units/{unitId}/activity';
+};
+
+export type UnitsControllerUpdateUnitActivityResponses = {
+    /**
+     * 유닛 강의 활동 이벤트 업데이트
+     */
+    200: UnitActivity;
+};
+
+export type UnitsControllerUpdateUnitActivityResponse = UnitsControllerUpdateUnitActivityResponses[keyof UnitsControllerUpdateUnitActivityResponses];
+
+export type UnitCoursesControllerCreateData = {
+    body: CreateCourseDto;
+    path?: never;
+    query?: never;
+    url: '/unit-courses';
+};
+
+export type UnitCoursesControllerCreateResponses = {
+    /**
+     * 코스 생성
+     */
+    200: Course;
+};
+
+export type UnitCoursesControllerCreateResponse = UnitCoursesControllerCreateResponses[keyof UnitCoursesControllerCreateResponses];
+
+export type UnitCoursesControllerFindOneData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/unit-courses/{id}';
+};
+
+export type UnitCoursesControllerFindOneResponses = {
+    /**
+     * 코스 상세 정보
+     */
+    200: CourseDetailDto;
+};
+
+export type UnitCoursesControllerFindOneResponse = UnitCoursesControllerFindOneResponses[keyof UnitCoursesControllerFindOneResponses];

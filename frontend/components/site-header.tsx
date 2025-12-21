@@ -99,13 +99,24 @@ export default function SiteHeader({
     !pathname.match(/^\/signup/) &&
     !pathname.match(/^\/course\/[0-9a-f-]+(\/edit|\/edit\/.*)$/) &&
     !pathname.match(/^\/courses\/lecture/);
-  const isCategoryNeeded = pathname == "/" 
-                        || pathname.includes("/courses")
-                        || pathname.includes("/search");
+  
+  const isCategoryNeeded =
+      !pathname.match(/^\/my\/courses/) && (
+      pathname === "/" ||
+      pathname.startsWith("/courses") ||
+      pathname.startsWith("/search")
+    );
+
+          
   const isSearchNeeded = 
     !pathname.match(/^\/course\/[0-9a-f-]/) &&
     !pathname.match(/^\/course\/[0-9a-f-]+(\/edit|\/edit\/.*)$/) &&
-    !pathname.match(/^\/courses\/lecture/);
+    !pathname.match(/^\/courses\/lecture/) && 
+    !pathname.match(/^\/instructor/) &&
+    !pathname.match(/^\/create_courses/) && 
+    !pathname.match(/^\/my\/courses/) &&
+    !pathname.match(/^\/carts/);
+    
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 

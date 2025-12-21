@@ -70,39 +70,176 @@ function formatSecondsToMinSec(seconds: number | undefined) {
   return `${mins}:${secs}`;
 }
 
+// function LectureRow({
+//   lecture,
+//   isActive,
+//   onSelect,
+//   completed = false,
+// }: {
+//   lecture: LectureEntity;
+//   isActive: boolean;
+//   onSelect: () => void;
+//   completed?: boolean;
+// }) {
+//   return (
+//     <div
+//       onClick={lecture.videoStorageInfo ? onSelect : undefined}
+//       className={cn(
+//         "flex items-center justify-between text-sm px-4 py-2 cursor-pointer",
+//         isActive && "bg-primary/10 text-primary font-semibold",
+//         !isActive && "hover:bg-muted/50",
+//         lecture.videoStorageInfo ? "" : "cursor-default opacity-60"
+//       )}
+//     >
+//       <div className="flex items-center gap-2 truncate">
+//         {completed ? (
+//           <CheckCircle2 className="size-4 text-green-500 shrink-0" />
+//         ) : lecture.isPreview ? (
+//           <PlayCircleIcon className="size-4 text-primary shrink-0" />
+//         ) : (
+//           <LockIcon className="size-4 text-muted-foreground shrink-0" />
+//         )}
+//         <span className="truncate">{lecture.title}</span>
+//       </div>
+//       <span className="shrink-0 pl-2 text-muted-foreground">
+//         {formatSecondsToMinSec(lecture.duration)}
+//       </span>
+//     </div>
+//   );
+// }
+
+// function Sidebar({
+//   sections,
+//   currentLectureId,
+//   onSelectLecture,
+//   course,
+//   onClose,
+//   user,
+// }: {
+//   sections: SectionEntity[];
+//   currentLectureId?: string;
+//   onSelectLecture: (lecture: LectureEntity) => void;
+//   course: CourseDetailDto;
+//   onClose: () => void;
+//   user?: User;
+// }) {
+//   return (
+//     <aside className="hidden lg:flex flex-col w-80 h-screen bg-white border-l shadow-lg">
+//       {/* Header */}
+//       <div className="flex items-center justify-between px-4 py-3 border-b">
+//         <h2 className="text-lg font-semibold" title={course.title}>
+//           {course.title}
+//         </h2>
+//         <button
+//           className="p-1 text-muted-foreground hover:text-foreground"
+//           onClick={onClose}
+//           aria-label="Close sidebar"
+//         >
+//           <XIcon className="size-4" />
+//         </button>
+//       </div>
+
+//       {/* Tabs */}
+//       <Tabs defaultValue="curriculum" className="flex-1 flex flex-col p-2">
+//         <TabsList className="grid w-full grid-cols-2 my-4 mb-2">
+//           <TabsTrigger value="curriculum">커리큘럼</TabsTrigger>
+//           <TabsTrigger value="qa">질문&답변</TabsTrigger>
+//         </TabsList>
+
+//         <TabsContent value="curriculum" className="flex-1 overflow-y-auto mt-0">
+//           <Accordion type="multiple" className="w-full">
+//             {sections.map((section) => (
+//               <AccordionItem
+//                 key={section.id}
+//                 value={section.id}
+//                 className="border-b last:border-b-0"
+//               >
+//                 <AccordionTrigger className="flex text-sm font-medium px-4 py-3 bg-muted/50 hover:no-underline">
+//                   <span className="flex-1 text-left truncate">
+//                     {section.title}
+//                   </span>
+//                   <span className="ml-2 text-xs font-medium text-muted-foreground">
+//                     {section.lectures.length}개
+//                   </span>
+//                 </AccordionTrigger>
+//                 <AccordionContent className="bg-background">
+//                   <div className="flex flex-col">
+//                     {section.lectures
+//                       .sort((a, b) => a.order - b.order)
+//                       .map((lecture) => (
+//                         <LectureRow
+//                           key={lecture.id}
+//                           lecture={lecture}
+//                           isActive={lecture.id === currentLectureId}
+//                           onSelect={() => onSelectLecture(lecture)}
+//                           completed={
+//                             false /* TODO: replace with real progress */
+//                           }
+//                         />
+//                       ))}
+//                   </div>
+//                 </AccordionContent>
+//               </AccordionItem>
+//             ))}
+//           </Accordion>
+//         </TabsContent>
+
+//         <TabsContent value="qa" className="flex-1 overflow-y-auto mt-0 px-4">
+//           <QuestionsSection courseId={course.id} user={user} />
+//         </TabsContent>
+//       </Tabs>
+//     </aside>
+//   );
+// }
+
 function LectureRow({
   lecture,
   isActive,
   onSelect,
   completed = false,
+  isUnit = false,
+  unitType,
 }: {
-  lecture: LectureEntity;
+  lecture: LectureEntity | any;
   isActive: boolean;
   onSelect: () => void;
   completed?: boolean;
+  isUnit?: boolean;
+  unitType?: "LECTURE" | "MISSION";
 }) {
+  const isMission = isUnit && unitType === "MISSION";
+  
   return (
     <div
-      onClick={lecture.videoStorageInfo ? onSelect : undefined}
+      onClick={lecture.videoStorageInfo || isMission ? onSelect : undefined}
       className={cn(
-        "flex items-center justify-between text-sm px-4 py-2 cursor-pointer",
-        isActive && "bg-primary/10 text-primary font-semibold",
-        !isActive && "hover:bg-muted/50",
-        lecture.videoStorageInfo ? "" : "cursor-default opacity-60"
+        "flex items-center justify-between gap-3 px-4 py-3 cursor-pointer transition-colors border-b border-gray-50 last:border-b-0",
+        isActive && "bg-green-50",
+        !isActive && "hover:bg-gray-50",
+        (lecture.videoStorageInfo || isMission) ? "" : "cursor-default opacity-50"
       )}
     >
-      <div className="flex items-center gap-2 truncate">
+      <div className="flex items-center gap-3 flex-1 min-w-0">
         {completed ? (
-          <CheckCircle2 className="size-4 text-green-500 shrink-0" />
-        ) : lecture.isPreview ? (
-          <PlayCircleIcon className="size-4 text-primary shrink-0" />
+          <CheckCircle2 className="size-5 text-green-500 shrink-0" />
+        ) : lecture.isPreview || isMission ? (
+          <div className="size-5 rounded-full border-2 border-green-500 shrink-0 flex items-center justify-center">
+            <PlayCircleIcon className="size-3 text-green-500" />
+          </div>
         ) : (
-          <LockIcon className="size-4 text-muted-foreground shrink-0" />
+          <div className="size-5 rounded-full bg-gray-200 shrink-0 flex items-center justify-center">
+            <LockIcon className="size-3 text-gray-400" />
+          </div>
         )}
-        <span className="truncate">{lecture.title}</span>
+        <span className={cn(
+          "truncate text-sm",
+          isActive ? "font-semibold text-gray-900" : "text-gray-700"
+        )}>
+          {lecture.title}
+        </span>
       </div>
-      <span className="shrink-0 pl-2 text-muted-foreground">
-        {formatSecondsToMinSec(lecture.duration)}
+      <span className="shrink-0 text-xs text-gray-500">
+        {isMission ? "미션" : formatSecondsToMinSec(lecture.duration)}
       </span>
     </div>
   );
@@ -123,68 +260,143 @@ function Sidebar({
   onClose: () => void;
   user?: User;
 }) {
+  const defaultOpenSections = sections.map(s => s.id);
+  
   return (
-    <aside className="hidden lg:flex flex-col w-80 h-screen bg-white border-l shadow-lg">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b">
-        <h2 className="text-lg font-semibold" title={course.title}>
-          {course.title}
-        </h2>
+    <aside className="hidden lg:flex flex-col w-[400px] h-screen bg-white border-l">
+      {/* Header - 고정 */}
+      <div className="flex items-center justify-between px-4 py-4 border-b bg-white flex-shrink-0">
+        <h2 className="text-base font-bold text-gray-900">커리큘럼</h2>
         <button
-          className="p-1 text-muted-foreground hover:text-foreground"
+          className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
           onClick={onClose}
           aria-label="Close sidebar"
         >
-          <XIcon className="size-4" />
+          <XIcon className="size-5" />
         </button>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="curriculum" className="flex-1 flex flex-col p-2">
-        <TabsList className="grid w-full grid-cols-2 my-4 mb-2">
-          <TabsTrigger value="curriculum">커리큘럼</TabsTrigger>
-          <TabsTrigger value="qa">질문&답변</TabsTrigger>
+      {/* Course Title and Progress - 고정 */}
+      <div className="px-4 py-4 border-b bg-white flex-shrink-0">
+        <h3 className="text-sm font-semibold text-gray-900 mb-3 line-clamp-2">
+          {course.title}
+        </h3>
+        
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-gray-600">진도율</span>
+            <span className="font-semibold text-green-600">0%</span>
+          </div>
+          <Progress value={0} className="h-1.5" />
+          
+          <div className="grid grid-cols-3 gap-2 pt-2">
+            <div className="text-center">
+              <div className="text-lg font-bold text-green-600">0</div>
+              <div className="text-xs text-gray-500">완료한 강의</div>
+            </div>
+            <div className="text-center border-x border-gray-200">
+              <div className="text-lg font-bold text-gray-400">
+                {sections.reduce((acc, s) => {
+                  const sectionWithUnits = s as any;
+                  const lectureCount = s.lectures?.length || 0;
+                  const unitCount = sectionWithUnits.units?.length || 0;
+                  return acc + lectureCount + unitCount;
+                }, 0)}
+              </div>
+              <div className="text-xs text-gray-500">전체 강의</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-bold text-gray-400">0%</div>
+              <div className="text-xs text-gray-500">평균 진행률</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs - 스크롤 가능 영역 */}
+      <Tabs defaultValue="curriculum" className="flex-1 flex flex-col min-h-0">
+        <TabsList className="grid w-full grid-cols-2 rounded-none border-b h-12 bg-white flex-shrink-0">
+          <TabsTrigger 
+            value="curriculum"
+            className="data-[state=active]:border-b-2 data-[state=active]:border-green-600 data-[state=active]:text-green-600 rounded-none"
+          >
+            수업
+          </TabsTrigger>
+          <TabsTrigger 
+            value="qa"
+            className="data-[state=active]:border-b-2 data-[state=active]:border-green-600 data-[state=active]:text-green-600 rounded-none"
+          >
+            질문&답변
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="curriculum" className="flex-1 overflow-y-auto mt-0">
-          <Accordion type="multiple" className="w-full">
-            {sections.map((section) => (
-              <AccordionItem
-                key={section.id}
-                value={section.id}
-                className="border-b last:border-b-0"
-              >
-                <AccordionTrigger className="flex text-sm font-medium px-4 py-3 bg-muted/50 hover:no-underline">
-                  <span className="flex-1 text-left truncate">
-                    {section.title}
-                  </span>
-                  <span className="ml-2 text-xs font-medium text-muted-foreground">
-                    {section.lectures.length}개
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent className="bg-background">
-                  <div className="flex flex-col">
-                    {section.lectures
-                      .sort((a, b) => a.order - b.order)
-                      .map((lecture) => (
-                        <LectureRow
-                          key={lecture.id}
-                          lecture={lecture}
-                          isActive={lecture.id === currentLectureId}
-                          onSelect={() => onSelectLecture(lecture)}
-                          completed={
-                            false /* TODO: replace with real progress */
-                          }
-                        />
-                      ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
+        <TabsContent value="curriculum" className="flex-1 overflow-y-auto mt-0 min-h-0">
+          <Accordion 
+            type="multiple" 
+            className="w-full"
+            defaultValue={defaultOpenSections}
+          >
+            {sections.map((section, sectionIdx) => {
+              const sectionWithUnits = section as any;
+              const allItems = [
+                ...(section.lectures || []).map(l => ({ ...l, itemType: 'lecture' as const })),
+                ...(sectionWithUnits.units || []).map((u: any) => ({ ...u, itemType: 'unit' as const }))
+              ].sort((a, b) => (a.order || 0) - (b.order || 0));
+              
+              return (
+                <AccordionItem
+                  key={section.id}
+                  value={section.id}
+                  className="border-b"
+                >
+                  <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center justify-between w-full pr-2">
+                      <span className="text-sm font-semibold text-gray-900 text-left">
+                        섹션 {sectionIdx + 1}. {section.title}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {allItems.length}개
+                      </span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-0">
+                    <div className="bg-gray-50">
+                      {allItems.map((item, idx) => {
+                        if (item.itemType === 'lecture') {
+                          const lecture = item as LectureEntity & { itemType: 'lecture' };
+                          return (
+                            <LectureRow
+                              key={`lecture-${lecture.id}`}
+                              lecture={lecture}
+                              isActive={lecture.id === currentLectureId}
+                              onSelect={() => onSelectLecture(lecture)}
+                              completed={false}
+                            />
+                          );
+                        } else {
+                          const unit = item as any;
+                          return (
+                            <LectureRow
+                              key={`unit-${unit.id}`}
+                              lecture={unit}
+                              isActive={unit.id === currentLectureId}
+                              onSelect={() => onSelectLecture(unit)}
+                              completed={false}
+                              isUnit={true}
+                              unitType={unit.type}
+                            />
+                          );
+                        }
+                      })}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
           </Accordion>
         </TabsContent>
 
-        <TabsContent value="qa" className="flex-1 overflow-y-auto mt-0 px-4">
+        <TabsContent value="qa" className="flex-1 overflow-y-auto mt-0 px-4 py-4 min-h-0">
           <QuestionsSection courseId={course.id} user={user} />
         </TabsContent>
       </Tabs>

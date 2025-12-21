@@ -19,6 +19,7 @@ import { PaymentsModule } from './payments/payments.module';
 import { BatchModule } from './batch/batch.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { UnitsModule } from './units/units.module';
+import { UnitCoursesModule } from './unit-courses/unit-courses.module';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { UnitsModule } from './units/units.module';
       max: 1000, // 최대 1000개의 항목이 캐시될 수 있음
       isGlobal: true,
     }),
-    ConfigModule.forRoot({ isGlobal : true }), AuthModule, PrismaModule, CoursesModule, LecturesModule, SectionsModule, CategoriesModule, MediaModule, UsersModule, CommentsModule, QuestionsModule, CartsModule, PaymentsModule, BatchModule, UnitsModule],
+    ConfigModule.forRoot({ isGlobal : true }), AuthModule, PrismaModule, CoursesModule, LecturesModule, SectionsModule, CategoriesModule, MediaModule, UsersModule, CommentsModule, QuestionsModule, CartsModule, PaymentsModule, BatchModule, UnitsModule, UnitCoursesModule],
   controllers: [AppController],
   providers: [
     AppService,

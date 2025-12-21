@@ -17,6 +17,7 @@ import { Course } from "@/generated/openapi-client";
 import { useMutation } from "@tanstack/react-query";
 import * as api from "@/lib/api";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type FormValues = {
   title: string;
@@ -43,15 +44,17 @@ export default function EditCourseInfoUI({ course }: { course: Course }) {
 
   const { handleSubmit, register, control, setValue, watch } = form;
 
+  const router = useRouter();
   const updateCourseMutation = useMutation({
     mutationFn: (data: FormValues) =>
       api.updateCourse(course.id, {
         ...data,
         price: parseInt(data.price),
-        discountPrice: parseInt(data.price),
+        discountPrice: parseInt(data.discountPrice),
       }),
     onSuccess: () => {
       toast.success("강의 정보가 성공적으로 업데이트 되었습니다!");
+      router.refresh();
     },
   });
 
@@ -167,10 +170,7 @@ export default function EditCourseInfoUI({ course }: { course: Course }) {
                   <FormLabel htmlFor="level-beginner" className="mr-4">
                     입문
                   </FormLabel>
-                  <RadioGroupItem
-                    value="INTERMEDIATE"
-                    id="level-intermediate"
-                  />
+                  <RadioGroupItem value="INTERMEDIATE" id="level-intermediate" />
                   <FormLabel htmlFor="level-intermediate" className="mr-4">
                     초급
                   </FormLabel>
