@@ -112,18 +112,18 @@ export const getCourseById = async (id: string) => {
   };
 };
 
-export const createCourse = async (title: string) => {
-  const { data, error } = await coursesControllerCreate({
-    body: {
-      title,
-    },
-  });
+// export const createCourse = async (title: string) => {
+//   const { data, error } = await coursesControllerCreate({
+//     body: {
+//       title,
+//     },
+//   });
 
-  return {
-    data,
-    error,
-  };
-};
+//   return {
+//     data,
+//     error,
+//   };
+// };
 
 export const updateCourse = async (
   id: string,
