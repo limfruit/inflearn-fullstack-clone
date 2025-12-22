@@ -71,7 +71,7 @@ export default function EditUnitDialog({
     title: unit.title,
     description: unit.description ?? "<p>수업의 설명을 적어주세요.</p>",
     videoStorageInfo: unit.videoStorageInfo,
-    content: unit.content ?? "<p>미션 내용을 작성해주세요.</p>",
+    content: unit.content ?? "<p>미션 내용을 작성해주세요.<br/></p>",
   });
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -237,7 +237,7 @@ export default function EditUnitDialog({
           {/* MISSION 타입: 미션 내용 에디터 */}
           {!isLectureType && (
             <>
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="description">미션 설명</Label>
                 <CKEditor
                   value={form.description}
@@ -248,13 +248,13 @@ export default function EditUnitDialog({
                 <p className="text-xs text-gray-500">
                   미션에 대한 간단한 설명을 작성해주세요
                 </p>
-              </div>
+              </div> */}
 
-              <div className="space-y-2">
+              <div className="space-y-2 mt-10">
                 <Label htmlFor="content">
                   미션 내용 <span className="text-red-500">*</span>
                 </Label>
-                <div className="border rounded-lg overflow-hidden">
+                <div className="rounded-lg overflow-hidden">
                   <CKEditor
                     value={form.content || ""}
                     onChange={(value) =>
@@ -270,7 +270,7 @@ export default function EditUnitDialog({
           )}
 
           {/* 버튼 */}
-          <div className="flex justify-end space-x-2 pt-4">
+          <div className="flex justify-end space-x-2 pt-2">
             <Button variant="outline" type="button" onClick={onClose}>
               취소
             </Button>
