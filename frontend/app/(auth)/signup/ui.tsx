@@ -95,27 +95,7 @@ export default function UI() {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (password !== passwordConfirm) {
-      alert("비밀번호가 일치하지 않습니다.");
-      return;
-    }
-
-    const result = await signUp({
-      email,
-      password,
-    });
-    if (result?.status === "ok") {
-      redirect("/signin");
-    }
-
-    if (result?.message) {
-      alert(result.message);
-    }
-  };
-
+  
   const hasLower = /[a-z]/.test(password);
   const hasUpper = /[A-Z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
@@ -134,8 +114,58 @@ export default function UI() {
     hasNoRepeat: !/(.)\1\1/.test(password),
   };
 
+  // 모든 비밀번호 조건이 충족되었는지 확인
+  const isPasswordValid = 
+    passwordChecks.hasMinCategory && 
+    passwordChecks.hasMinLength && 
+    passwordChecks.hasNoRepeat;
+
+  // 비밀번호 확인이 일치하는지 확인
+  const isPasswordConfirmValid = 
+    passwordConfirm.length > 0 && password === passwordConfirm;
+
+  // 전체 폼 유효성 검사
+  const isFormValid = 
+    email.length > 0 && 
+    isPasswordValid && 
+    isPasswordConfirmValid;
+
   const passwordConfirmCheck =
     passwordConfirm.length > 0 && password !== passwordConfirm;
+
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    // 이메일 검증
+    if (!email || email.length === 0) {
+      alert("이메일을 입력해주세요.");
+      return;
+    }
+    
+    // 비밀번호 유효성 검증
+    if (!isPasswordValid) {
+      alert("비밀번호가 조건을 만족하지 않습니다.");
+      return;
+    }
+
+    if (password !== passwordConfirm) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    const result = await signUp({
+      email,
+      password,
+    });
+    if (result?.status === "ok") {
+      redirect("/");
+    }
+
+    if (result?.message) {
+      alert(result.message);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4">

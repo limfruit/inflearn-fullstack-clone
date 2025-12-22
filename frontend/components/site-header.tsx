@@ -234,7 +234,10 @@ export default function SiteHeader({
             </Button>
           </Link>
 
-          <button className="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-[#1dc078] transition-colors rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer">
+          <button 
+            className="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-[#1dc078] transition-colors rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer"
+            onClick={() => alert("기능 준비 중")}
+            >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
               viewBox="0 0 448 512" 
@@ -245,7 +248,10 @@ export default function SiteHeader({
             </svg>
           </button>
 
-          <button className="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-[#1dc078] transition-colors rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer">
+          <button 
+            className="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-[#1dc078] transition-colors rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer"
+            onClick={() => alert("기능 준비 중")}
+            >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
               viewBox="0 0 512 512" 
