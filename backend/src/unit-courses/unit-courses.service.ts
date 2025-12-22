@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCourseDto } from './dto/create-course.dto';
-import { Course } from '@prisma/client';
+import { Course, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import slugify from 'lib/slugify';
 import { CourseDetailDto } from './dto/course-detail.dto';
+import { SearchUnitCourseDto } from './dto/search-unit-course.dto';
+import { SearchUnitCourseResponseDto } from './dto/search-unit-response.dto';
 
 @Injectable()
 export class UnitCoursesService {
@@ -181,6 +183,105 @@ export class UnitCoursesService {
         };
       
         return result as unknown as CourseDetailDto;
+      }
+
+      async searchCourses(
+        searchUnitCourseDto: SearchUnitCourseDto,
+      ): Promise<SearchUnitCourseResponseDto> {
+        const { q, category, priceRange, sortBy, order, page, pageSize, courseType } = searchUnitCourseDto;
+      
+        const where: Prisma.CourseWhereInput = {};
+      
+        if (q) {
+          where.OR = [
+            // title에 포함된 키워드
+            {
+              title: {
+                contains: q,
+                mode: 'insensitive', // 대소문자 구분없이 검색
+              },
+            },
+            // instructor(지식공유자) 이름이 포함된 키워드
+            {
+              instructor: {
+                name: {
+                  contains: q,
+                  mode: 'insensitive',
+                },
+              },
+            },
+          ];
+        }
+      
+        if (category) {
+          where.categories = {
+            some: { // 카테고리 중 어떤거라도 해당된다면,,
+              slug: category,
+            },
+          };
+        }
+
+        // courseType 필터링 추가
+        if (courseType) {
+          where.type = courseType;
+        }
+      
+        if (priceRange) {
+          const priceConditions: any = {};
+          if (priceRange.min !== undefined) {
+            priceConditions.gte = priceRange.min;
+          }
+          if (priceRange.max !== undefined) {
+            priceConditions.lte = priceRange.max;
+          }
+          if (Object.keys(priceConditions).length > 0) {
+            where.price = priceConditions;
+          }
+        }
+      
+        const orderBy: Prisma.CourseOrderByWithRelationInput = {};
+        if (sortBy === 'price') {
+          orderBy.price = order as 'asc' | 'desc';
+        }
+      
+        const skip = (page - 1) * pageSize;
+        const totalItems = await this.prisma.course.count({ where });
+        const courses = await this.prisma.course.findMany({
+          where,
+          orderBy,
+          skip,
+          take: pageSize,
+          include: {
+            instructor: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            categories: true,
+            _count: {
+              select: {
+                enrollments: true,
+                reviews: true,
+              },
+            },
+          },
+        });
+      
+        const totalPages = Math.ceil(totalItems / pageSize);
+        const hasNext = page < totalPages;
+        const hasPrev = page > 1;
+      
+        return {
+          courses: courses as any[],
+          pagination: {
+            currentPage: page,
+            totalPages,
+            totalItems,
+            hasNext,
+            hasPrev,
+          },
+        };
       }
     
 }

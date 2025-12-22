@@ -8,6 +8,8 @@ import { Course as CourseEntity } from 'src/_gen/prisma-class/course';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { OptionalAccessTokenGuard } from 'src/auth/guards/optional-access-token.guard';
 import { CourseDetailDto } from './dto/course-detail.dto';
+import { SearchUnitCourseDto } from './dto/search-unit-course.dto';
+import { SearchUnitCourseResponseDto } from './dto/search-unit-response.dto';
 
 @ApiTags('UnitCourse')
 @Controller('unit-courses')
@@ -36,5 +38,12 @@ export class UnitCoursesController {
       return this.unitCoursesService.findOne(id, req.user?.sub);
     }
 
-    
+    @Post('search')
+    @ApiOkResponse({
+      description: '코스 검색',
+      type: SearchUnitCourseResponseDto,
+    })
+    search(@Body() searchUnitCourseDto: SearchUnitCourseDto) {
+      return this.unitCoursesService.searchCourses(searchUnitCourseDto);
+    }    
 }

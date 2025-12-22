@@ -46,11 +46,13 @@ import {
   questionsControllerRemove,
   questionsControllerUpdate,
   SearchCourseDto,
+  SearchUnitCourseDto,
   sectionsControllerCreate,
   sectionsControllerDelete,
   sectionsControllerUpdate,
   unitCoursesControllerCreate,
   unitCoursesControllerFindOne,
+  unitCoursesControllerSearch,
   unitsControllerCreate,
   unitsControllerDelete,
   unitsControllerUpdate,
@@ -654,6 +656,14 @@ export const deleteCourse = async (courseId: string) => {
     path: {
       id: courseId,
     },
+  });
+
+  return { data, error };
+};
+
+export const searchUnitCourses = async (searchUnitCourseDto: SearchUnitCourseDto) => {
+  const { data, error } = await unitCoursesControllerSearch({
+    body: searchUnitCourseDto,
   });
 
   return { data, error };

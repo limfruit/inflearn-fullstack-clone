@@ -833,6 +833,52 @@ export type UpdateUnitActivityDto = {
     lastVisitedAt: string;
 };
 
+export type SearchUnitCourseDto = {
+    /**
+     * 검색 키워드
+     */
+    q?: string;
+    /**
+     * 카테고리 ID
+     */
+    category?: string;
+    /**
+     * 가격 범위
+     */
+    priceRange?: PriceRangeDto;
+    /**
+     * 정렬 기준
+     */
+    sortBy?: 'price';
+    /**
+     * 정렬 순서
+     */
+    order?: 'asc' | 'desc';
+    /**
+     * 페이지 번호
+     */
+    page?: number;
+    /**
+     * 페이지당 결과 수
+     */
+    pageSize?: number;
+    /**
+     * 강의 타입
+     */
+    courseType?: string;
+};
+
+export type SearchUnitCourseResponseDto = {
+    /**
+     * 강의 목록
+     */
+    courses: Array<Course>;
+    /**
+     * 페이지네이션 정보
+     */
+    pagination: PaginationDto;
+};
+
 export type AppControllerGetHelloData = {
     body?: never;
     path?: never;
@@ -1872,3 +1918,19 @@ export type UnitCoursesControllerFindOneResponses = {
 };
 
 export type UnitCoursesControllerFindOneResponse = UnitCoursesControllerFindOneResponses[keyof UnitCoursesControllerFindOneResponses];
+
+export type UnitCoursesControllerSearchData = {
+    body: SearchUnitCourseDto;
+    path?: never;
+    query?: never;
+    url: '/unit-courses/search';
+};
+
+export type UnitCoursesControllerSearchResponses = {
+    /**
+     * 코스 검색
+     */
+    200: SearchUnitCourseResponseDto;
+};
+
+export type UnitCoursesControllerSearchResponse = UnitCoursesControllerSearchResponses[keyof UnitCoursesControllerSearchResponses];

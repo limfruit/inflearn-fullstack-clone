@@ -189,12 +189,18 @@ export default function SiteHeader({
         </nav> */}
         <nav className="main-nav flex-[2] flex justify-center items-center gap-6 text-base font-bold text-gray-700">
           {[
-            { href: "#", label: "강의", icon: "/images/header/course.png" },
-            { href: "#", label: "챌린지", icon: "/images/header/challenge.png" },
+            { href: "/", label: "강의", icon: "/images/header/course.png" },
+            { href: "/challenge", label: "챌린지", icon: "/images/header/challenge.png" },
             { href: "#", label: "멘토링", icon: "/images/header/mentoring.png" },
             { href: "#", label: "클립", icon: "/images/header/clip.png" },
             { href: "#", label: "커뮤니티", icon: "/images/header/community.png" },
-          ].map((menu) => (
+          ].map((menu) => {
+
+            const isActive = 
+              (menu.label === "강의" && (pathname === "/" || pathname.startsWith("/courses") || pathname.startsWith("/search"))) ||
+              (menu.label === "챌린지" && pathname.startsWith("/challenge"));
+          
+          return(
             <Link key={menu.label} href={menu.href} className="hover:text-[#1dc078] transition-colors">
               <div className="flex items-center gap-1">
                 <Image
@@ -203,10 +209,16 @@ export default function SiteHeader({
                   height={32}
                   alt={menu.label}
                 />
-                <span>{menu.label}</span>
+                  <span className="relative pb-1 ">
+                    {menu.label}
+                    {isActive && (
+                      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1dc078]" />
+                    )}
+                  </span>
               </div>
             </Link>
-          ))}
+          );
+        })}
         </nav>
         
         {/* <Button

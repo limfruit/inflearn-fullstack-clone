@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "인프런은 라이프타임 커리어 플랫폼입니다.",
 };
 
-export default async function Home({
+export default async function ChallengeHome({
   searchParams,
 }: {
   searchParams: Promise<{ page_number?: string }>;
@@ -18,7 +18,7 @@ export default async function Home({
       <CourseList 
         q={""} 
         page={page_number ? parseInt(page_number) : 1} 
-        courseType="ONLINE"
+        courseType="CHALLENGE"
       />
     </div>
   );

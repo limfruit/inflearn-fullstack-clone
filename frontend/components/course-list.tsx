@@ -14,6 +14,7 @@ import { auth } from "@/auth";
 
 interface CourseListProps extends SearchCourseDto {
   baseUrl?: string;
+  courseType?: "ONLINE" | "CHALLENGE";
 }
 
 export default async function CourseList({
@@ -25,10 +26,11 @@ export default async function CourseList({
   page = 1,
   pageSize = 20,
   baseUrl = "",
+  courseType,
 }: CourseListProps) {
 
   const session = await auth();
-  const { data, error } = await api.searchCourses({
+  const { data, error } = await api.searchUnitCourses({
     q,
     category,
     priceRange,
@@ -36,6 +38,7 @@ export default async function CourseList({
     order,
     page,
     pageSize,
+    courseType,
   });
 
   if (error) {
