@@ -865,12 +865,17 @@ function FloatingMenu({
     }
 
     if (course.price > 0) {
-      alert("결제는 추후 구현 예정입니다. 무료 강의를 이용해주세요.");
+      // alert("결제는 추후 구현 예정입니다. 무료 강의를 이용해주세요.");
+      addToCartMutation.mutate(undefined, {
+        onSuccess: () => {
+          router.push("/carts");
+        }
+      });
       return;
     }
 
     enrollMutation.mutate();
-  }, [course, user, enrollMutation, isEnrolled]);
+  }, [course, user, enrollMutation, isEnrolled, addToCartMutation, router]);
 
   const handleStartLearning = () => {
     setShowEnrollSuccessDialog(false);
@@ -903,7 +908,7 @@ function FloatingMenu({
                 <span className="text-2xl font-bold">무료</span>
               )}
             </div>
-            {isEnrolled ? (
+            {/* {isEnrolled ? (
               <button
                 onClick={() => {
                   router.push(`/courses/lecture?courseId=${course.id}`);
@@ -925,18 +930,57 @@ function FloatingMenu({
               >
                 수강신청 하기
               </button>
-            )}
-            {!isEnrolled && (
+            )} */}
+
+            {isEnrolled && (
               <button
-                onClick={handleCart}
-                className="cursor-pointer w-full py-2 px-4 rounded-md border font-medium"
+                onClick={() => {
+                  router.push(`/courses/lecture?courseId=${course.id}`);
+                }}
+                className={cn(
+                  "cursor-pointer w-full py-2 px-4 rounded-md bg-primary text-white font-semibold"
+                )}
               >
-                {cartItemsQuery.data?.data?.items?.some(
-                  (item) => item.courseId === course.id
-                )
-                  ? "수강 바구니로 이동"
-                  : "바구니에 담기"}
+                학습으로 이동하기
               </button>
+            )}
+
+            {!isEnrolled && (
+              cartItemsQuery.data?.data?.items?.some((item) => item.courseId === course.id) 
+              ? (
+                <button
+                  onClick={handleCart}
+                  className="cursor-pointer w-full py-2 px-4 rounded-md bg-primary text-white font-semibold
+                    flex items-center justify-center gap-1">
+                  수강 바구니로 이동
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    viewBox="0 0 384 512" 
+                    className="w-4 h-4"
+                    fill="currentColor"
+                  >
+                    <path d="M328 96c13.3 0 24 10.7 24 24V360c0 13.3-10.7 24-24 24s-24-10.7-24-24V177.9L73 409c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l231-231H88c-13.3 0-24-10.7-24-24s10.7-24 24-24H328z" />
+                  </svg>
+                </button>
+              ) : ( 
+                <>
+                <button
+                onClick={handleEnroll}
+                disabled={enrollMutation.isPending}
+                className={cn(
+                  "cursor-pointer w-full py-2 px-4 rounded-md bg-primary text-white font-semibold",
+                  enrollMutation.isPending && "cursor-not-allowed"
+                )}
+              >
+                수강신청 하기
+              </button>      
+                <button
+                  onClick={handleCart}
+                  className="cursor-pointer w-full py-2 px-4 rounded-md border font-medium">
+                  바구니에 담기
+                </button>
+                </>
+              ) 
             )}
             <button
               onClick={handleFavorite}
